@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <appSettings>
+    <add key="PublicKey" value="your publickey" />
+    <add key="SecretKey" value="your secretkey" />
+  </appSettings>
+</configuration>
