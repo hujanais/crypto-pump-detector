@@ -13,3 +13,10 @@ In Engine.cs.
         
         
    Use at your own risk!  This is just for my entertainment use only.
+
+
+# Dockerize It on Pi.
+
+1.  curl -sSL https://get.docker.com | sh
+2.  sudo usermod -aG docker pi [restart pi so that we can run docker from user account]
+3.  
