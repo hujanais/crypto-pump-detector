@@ -13,3 +13,12 @@ In Engine.cs.
         
         
    Use at your own risk!  This is just for my entertainment use only.
+
+
+# Dockerize It on Pi.
+
+1.  curl -sSL https://get.docker.com | sh
+2.  sudo usermod -aG docker pi [restart pi so that we can run docker from user account]
+3.  git clone the source to the pi but since we don't have dotnet installed on the pi yet, just build the application from a laptop.  I just use gitbash from my computer and run it on the pi as a networked drive.
+  dotnet publish -c release
+4. docker run --rm -it mcr.microsoft.com/dotnet/core/sdk:3.1 dotnet --info [docker image will be downloaded if it is not installed yet]
