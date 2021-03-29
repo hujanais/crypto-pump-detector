@@ -93,6 +93,7 @@ namespace PumpDetector.Services
                         var asset = this.Assets[i];
                         if (foundTkr.Value != null)
                         {
+
                             asset.Price = foundTkr.Value.Last;
                             asset.Ask = foundTkr.Value.Ask;
                             asset.Bid = foundTkr.Value.Bid;
@@ -129,7 +130,11 @@ namespace PumpDetector.Services
                 var asset = this.Assets[i];
                 asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
-                logger.Trace($"Trigger: {asset.Ticker}, {asset.percentagePriceChange:0.00}, {asset.HasTrade}, {asset.CanBuy}");
+                if (asset.percentagePriceChange > 2.5m)
+                {
+                    logger.Trace($"Trigger: {asset.Ticker}, {asset.percentagePriceChange:0.00}, {asset.HasTrade}, {asset.CanBuy}");
+                }
+
                 if (asset.percentagePriceChange > 2.5m && !asset.HasTrade && asset.CanBuy)
                 {
                     doBuy(asset);
