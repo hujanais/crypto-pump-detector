@@ -125,19 +125,25 @@ namespace PumpDetector.Services
             for (int i = 0; i < numTickers; i++)
             {
                 var ticker = this.Assets[i].Ticker;
-                var candle = (await api.GetCandlesAsync(ticker, 900, null, null, 100)).ToArray();
-                var ohlc = candle.Last();
-                var asset = this.Assets[i];
-                asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
-
-                if (asset.percentagePriceChange > 2.5m)
+                try
                 {
-                    logger.Trace($"Trigger: {asset.Ticker}, {asset.percentagePriceChange:0.00}, {asset.HasTrade}, {asset.CanBuy}");
-                }
+                    var candle = (await api.GetCandlesAsync(ticker, 900, null, null, 100)).ToArray();
+                    var ohlc = candle.Last();
+                    var asset = this.Assets[i];
+                    asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
-                if (asset.percentagePriceChange > 2.5m && !asset.HasTrade && asset.CanBuy)
+                    if (asset.percentagePriceChange > 2.5m)
+                    {
+                        logger.Trace($"Trigger: {asset.Ticker}, {asset.percentagePriceChange:0.00}, {asset.HasTrade}, {asset.CanBuy}");
+                    }
+
+                    if (asset.percentagePriceChange > 2.5m && !asset.HasTrade && asset.CanBuy)
+                    {
+                        doBuy(asset);
+                    }
+                } catch (Exception ex)
                 {
-                    doBuy(asset);
+                    logger.Trace(ex);
                 }
             }
 
