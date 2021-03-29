@@ -98,7 +98,10 @@ namespace PumpDetector.Services
                             asset.Bid = foundTkr.Value.Bid;
 
                             // adjust the stoploss.
-                            asset.adjustStopLoss();
+                            if (asset.HasTrade)
+                            {
+                                asset.adjustStopLoss();
+                            }
 
                             if (asset.HasTrade && asset.CanSell && (asset.Price < asset.StopLoss))
                             {
@@ -126,6 +129,7 @@ namespace PumpDetector.Services
                 var asset = this.Assets[i];
                 asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
+                logger.Trace($"Trigger: {asset.Ticker}, {asset.percentagePriceChange:0.00}, {asset.HasTrade}, {asset.CanBuy}");
                 if (asset.percentagePriceChange > 2.5m && !asset.HasTrade && asset.CanBuy)
                 {
                     doBuy(asset);

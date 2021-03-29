@@ -11,7 +11,8 @@ namespace PumpDetector
             //engine.BackTest();
             engine.StartYourEngines();
 
-            Console.ReadKey();
+            Console.WriteLine("Press Enter key to stop");
+            Console.Read();  // This works with Linux.
         }
     }
 }
