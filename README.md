@@ -1,4 +1,4 @@
-# crypto-pump-detector
+# crypto-pump-detector [This is just experimental to inspire you and not a finished product by any stretch of the imagination!]
 
 Steps to use.
 1.  Rename the app.config.example to app.config and put in your api key info.
