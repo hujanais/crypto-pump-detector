@@ -8,7 +8,7 @@ namespace PumpDetector
         static void Main(string[] args)
         {
             Engine engine = new Engine();
-            //engine.BackTest();
+            // engine.BackTest();
             engine.StartYourEngines();
 
             Console.WriteLine("Press Enter key to stop");

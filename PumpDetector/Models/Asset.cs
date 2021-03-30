@@ -46,19 +46,6 @@ namespace PumpDetector.Models
             }
         }
 
-        /// <summary>
-        /// Cooldown period of 1 minute after buy before enabling stoploss setting.
-        /// </summary>
-        public bool CanSell
-        {
-            get
-            {
-                var timeElapsed = DateTime.UtcNow - LastBuyTime;
-                return timeElapsed.TotalMinutes > 1;
-
-            }
-        }
-
         public decimal PL
         {
             get => ((SellPrice - BuyPrice) / BuyPrice) * 100;
