@@ -20,12 +20,12 @@ namespace PumpDetector.Services
         private IList<Asset> Assets = new List<Asset>();
         private Dictionary<string, decimal> myWallet;
 
-        private bool isFirstTime = true;
         private bool isLiveTrading = true;
         decimal stakeSize = 50m;
-        decimal balanceLowWaterMark = 3200m;
+        decimal balanceLowWaterMark = 3000m;
         string QUOTECURRENCY = "USD";
         decimal PUMPTHRESHOLDPERCENT = 2;
+        decimal PUMPVOLUMETIMES = 3;        // 3x the volume.
 
         const int FIFTEENMINUTES = 15 * 60 * 1000;
         Timer timer = null;
@@ -102,12 +102,10 @@ namespace PumpDetector.Services
 
                             var holdTime = (DateTime.UtcNow - asset.LastBuyTime);
                             // adjust the stoploss only after 15 minutes.
-                            if (asset.HasTrade && holdTime.TotalSeconds > 15*60)
+                            if (asset.HasTrade && holdTime.TotalSeconds > 15 * 60)
                             {
                                 asset.adjustStopLoss();
-                                logger.Trace($"Adjust StopLoss. {asset.Ticker} to {asset.StopLoss}");
                             }
-
 
                             if (asset.HasTrade && (asset.Price < asset.StopLoss))
                             {
@@ -126,6 +124,8 @@ namespace PumpDetector.Services
             // update the wallet.
             this.myWallet = await getWallet();
 
+            logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
+
             int numTickers = this.Assets.Count();
 
             for (int i = 0; i < numTickers; i++)
@@ -134,27 +134,24 @@ namespace PumpDetector.Services
                 try
                 {
                     var candle = (await api.GetCandlesAsync(ticker, 900, null, null, 100)).ToArray();
-                    var ohlc = candle.TakeLast(2).First();   // note that this is called a minute after the 15/30/45/60 minute so we need to look at the previous candle.
+                    var ohlc = candle[candle.Length - 2];   // note that this is called a minute after the 15/30/45/60 minute so we need to look at the previous candle.
+                    var ohlcPrevious = candle[candle.Length - 3];
                     var asset = this.Assets[i];
                     asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
+                    Console.Write(".");
 
-                    // prevent trading on bot startup because the candle probably is too out of date.
-                    if (!this.isFirstTime)
+                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (3 * ohlcPrevious.QuoteCurrencyVolume);
+                    bool priceTrigger = asset.percentagePriceChange > PUMPTHRESHOLDPERCENT;
+
+                    if (volumeTrigger && priceTrigger && !asset.HasTrade && asset.CanBuy)
                     {
-                        if (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT && !asset.HasTrade && asset.CanBuy)
-                        {
-                            doBuy(asset);  // initial stoploss calculated in here.
-                        }
+                        doBuy(asset);  // initial stoploss calculated in here.
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     logger.Trace(ex);
                 }
-            }
-
-            if (this.isFirstTime)
-            {
-                logger.Trace($"Trading skipped because isFirstTime={isFirstTime}");
             }
 
             // print out the top-3 percentage movers.
@@ -164,7 +161,6 @@ namespace PumpDetector.Services
                 logger.Trace($"{bm.TimeStamp} {bm.Ticker}. {bm.percentagePriceChange:0.00}");
             }
 
-            this.isFirstTime = false;
             logger.Trace("End getCandles");
         }
 
@@ -194,7 +190,7 @@ namespace PumpDetector.Services
                         Price = asset.Ask,
                         MarketSymbol = asset.Ticker
                     };
-                    
+
                     var result = await api.PlaceOrderAsync(order);
                     logger.Trace($"BUY: PlaceOrderAsync. {result.MarketSymbol} ${result.Price}.  {result.Result}. {result.OrderId}");
 
@@ -227,6 +223,13 @@ namespace PumpDetector.Services
                 {
                     // check to see if we have anything to sell.
                     decimal amountAvail = 0;
+
+                    // if wallet is empty, refresh wallet once.
+                    if (!myWallet.ContainsKey(asset.BaseCurrency))
+                    {
+                        myWallet = await getWallet();
+                    }
+
                     if (myWallet.ContainsKey(asset.BaseCurrency))
                     {
                         amountAvail = myWallet[asset.BaseCurrency];
@@ -241,6 +244,10 @@ namespace PumpDetector.Services
 
                         logger.Trace($"Sell: PlaceOrderAsync. {result.MarketSymbol} ${result.Price}.  {result.Result}. {result.OrderId}");
                     }
+                    else
+                    {
+                        throw new Exception("Insufficient fund");
+                    }
                 }
 
                 asset.HasTrade = false;
@@ -248,11 +255,12 @@ namespace PumpDetector.Services
                 asset.LastSellTime = DateTime.UtcNow;
                 logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                logger.Info($"Sell - ERROR, {asset.Ticker}");
-                logger.Trace($"Sell {asset.Ticker} failed with {ex.Message}");
-            } finally
+                logger.Info($"Sell {asset.Ticker} failed with {ex.Message}");
+            }
+            finally
             {
                 asset.HasTrade = false; // something went wrong but we will just clear this trade.
             }
@@ -290,7 +298,7 @@ namespace PumpDetector.Services
             Asset trade = null;
 
             // conditions.
-            
+
             decimal STOPLOSSPERCENT = 0.5m;
 
             int volumeWindow = 4;
