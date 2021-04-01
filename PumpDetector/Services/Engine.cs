@@ -25,9 +25,9 @@ namespace PumpDetector.Services
         decimal balanceLowWaterMark = 3000m;
         string QUOTECURRENCY = "USD";
         decimal PUMPTHRESHOLDPERCENT = 2;
-        decimal PUMPVOLUMETIMES = 3;        // 3x the volume.
+        double PUMPVOLUMETIMES = 3.0;        // 3x the volume.
 
-        const int FIFTEENMINUTES = 15 * 60 * 1000;
+        const int FIVEMINUTES = 5 * 60 * 1000;
         Timer timer = null;
 
 
@@ -70,17 +70,14 @@ namespace PumpDetector.Services
             }
 
             var currentTime = DateTime.UtcNow;
-            var minutesAway1 = 60 - currentTime.Minute;
-            var minutesAway2 = 45 - currentTime.Minute;
-            var minutesAway3 = 30 - currentTime.Minute;
-            var minutesAway4 = 15 - currentTime.Minute;
-            var minutesAway = new int[] { minutesAway1, minutesAway2, minutesAway3, minutesAway4 }.Where(a => a > 0).Min();
+            var remainder = (currentTime.Minute * 60 + currentTime.Second) % 300;
+            var secondsAway = 300 - remainder + 15;// don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 15 seconds.
 
-            logger.Trace($"App starting in {minutesAway} minutes.");
+            logger.Trace($"App starting in {secondsAway} seconds.");
 
-            // Update 15-minute candle once per 15-minutes.
+            // Update 5-minute candle once per 5-minutes.
             timer = new Timer(async (objState) => await doWork(objState));
-            timer.Change((minutesAway * 60 + 15) * 1000, FIFTEENMINUTES); // don't start exactly on the hour so that the server has prepared the 15minute candle.  offset by 15 seconds.
+            timer.Change(secondsAway * 1000, FIVEMINUTES); 
 
             // start up web socket.
             if (socket == null)
@@ -95,21 +92,16 @@ namespace PumpDetector.Services
                         var asset = this.Assets[i];
                         if (foundTkr.Value != null)
                         {
+                            asset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
 
-                            asset.Price = foundTkr.Value.Last;
-                            asset.Ask = foundTkr.Value.Ask;
-                            asset.Bid = foundTkr.Value.Bid;
-
-                            var holdTime = (DateTime.UtcNow - asset.LastBuyTime);
-                            // adjust the stoploss only after 15 minutes.
-                            if (asset.HasTrade && holdTime.TotalSeconds > 15 * 60)
+                            if (asset.HasTrade)
                             {
                                 asset.adjustStopLoss();
-                            }
-
-                            if (asset.HasTrade && (asset.Price < asset.StopLoss))
-                            {
-                                this.doSell(asset);
+                            
+                                if (asset.Price < asset.StopLoss)
+                                {
+                                    this.doSell(asset);
+                                }
                             }
                         }
                     }
@@ -140,7 +132,7 @@ namespace PumpDetector.Services
                     asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
                     Console.Write(".");
 
-                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (3 * ohlcPrevious.QuoteCurrencyVolume);
+                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
                     bool priceTrigger = asset.percentagePriceChange > PUMPTHRESHOLDPERCENT;
 
                     if (volumeTrigger && priceTrigger && !asset.HasTrade && asset.CanBuy)
@@ -168,6 +160,7 @@ namespace PumpDetector.Services
         {
             try
             {
+                bool isSuccess = false;
                 if (this.isLiveTrading)
                 {
                     decimal cashAvail = 0;
@@ -194,19 +187,26 @@ namespace PumpDetector.Services
                     var result = await api.PlaceOrderAsync(order);
                     logger.Trace($"BUY: PlaceOrderAsync. {result.MarketSymbol} ${result.Price}.  {result.Result}. {result.OrderId}");
 
-                    // manually reduce the walletsize.  it will be for real once every 15 minutes.
-                    myWallet[QUOTECURRENCY] = cashAvail - stakeSize;
+                    if (result.Result != ExchangeAPIOrderResult.Error)
+                    {
+                        isSuccess = true;
+                        // manually reduce the walletsize.  it will be for real once every 15 minutes.
+                        myWallet[QUOTECURRENCY] = cashAvail - stakeSize;
+                    }
                 }
 
-                asset.HasTrade = true;
-                asset.BuyPrice = asset.Ask;
-                asset.LastBuyTime = DateTime.UtcNow;
+                if (isSuccess || !isLiveTrading)
+                {
+                    asset.HasTrade = true;
+                    asset.BuyPrice = asset.Ask;
+                    asset.LastBuyTime = DateTime.UtcNow;
 
-                // set the initial stoploss to be 50% of the candle.
-                var midpoint = (asset.LowPrice + asset.HighPrice) / 2;
-                asset.StopLoss = midpoint;
+                    // set the initial stoploss to be 50% of the candle.
+                    var midpoint = (asset.LowPrice + asset.HighPrice) / 2;
+                    asset.StopLoss = midpoint;
 
-                logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}, {asset.percentagePriceChange:0.00}");
+                    logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}, {asset.percentagePriceChange:0.00}");
+                }
             }
             catch (Exception ex)
             {
@@ -219,6 +219,8 @@ namespace PumpDetector.Services
         {
             try
             {
+                asset.HasTrade = false; // clear the trade no matter what.  set this flag early to prevent over firing from websocket.
+
                 if (isLiveTrading)
                 {
                     // check to see if we have anything to sell.
@@ -234,6 +236,8 @@ namespace PumpDetector.Services
                     {
                         amountAvail = myWallet[asset.BaseCurrency];
 
+                        logger.Trace($"TrySell: PlaceOrderAsync. {asset.Ticker}. Amount={amountAvail}");
+
                         var result = await api.PlaceOrderAsync(new ExchangeOrderRequest
                         {
                             Amount = amountAvail,
@@ -242,7 +246,7 @@ namespace PumpDetector.Services
                             MarketSymbol = asset.Ticker
                         });
 
-                        logger.Trace($"Sell: PlaceOrderAsync. {result.MarketSymbol} ${result.Price}.  {result.Result}. {result.OrderId}");
+                        logger.Trace($"Sell: PlaceOrderAsync. {result.MarketSymbol}. Price: ${result.Price}.  Result={result.Result}.  OrderId={result.OrderId}");
                     }
                     else
                     {
@@ -259,10 +263,6 @@ namespace PumpDetector.Services
             catch (Exception ex)
             {
                 logger.Info($"Sell {asset.Ticker} failed with {ex.Message}");
-            }
-            finally
-            {
-                asset.HasTrade = false; // something went wrong but we will just clear this trade.
             }
         }
 
@@ -283,6 +283,7 @@ namespace PumpDetector.Services
 
         public async void BackTest()
         {
+
             logger.Trace("Starting BackTest");
             this.isLiveTrading = false;
 

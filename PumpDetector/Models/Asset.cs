@@ -7,6 +7,8 @@ namespace PumpDetector.Models
 {
     public class Asset
     {
+        NLog.Logger logger = NLog.LogManager.GetLogger("*");
+
         public string BaseCurrency { get; set; }
         public string Ticker { get; set; }
         public DateTime TimeStamp { get; set; }
@@ -33,6 +35,11 @@ namespace PumpDetector.Models
         /// Used to prevent immediate trade out after buying.  
         /// </summary>
         public DateTime LastBuyTime { get; set; }
+
+        /// <summary>
+        /// Flag to indicate that we are now in active trailing stop management.
+        /// </summary>
+        public bool IsActiveTrailingStops { get; set; }
 
         /// <summary>
         /// Cooldown period of 60 minutes after last sell.
@@ -62,6 +69,19 @@ namespace PumpDetector.Models
 
         #region Methods
 
+        // Reset everthing after selling the asset.
+        public void Reset()
+        {
+
+        }
+
+        public void UpdatePrices(decimal last, decimal ask, decimal bid)
+        {
+            Price = last;
+            Ask = ask;
+            Bid = bid;
+        }
+
         public void UpdateOHLC(DateTime ts, decimal o, decimal h, decimal l, decimal c, double vol)
         {
             this.TimeStamp = ts;
@@ -78,12 +98,26 @@ namespace PumpDetector.Models
         /// <param name="asset"></param>
         public void adjustStopLoss()
         {
-            if (this.Price > this.MaxPrice)
-            {
-                this.MaxPrice = this.Price;
+            // re-adjust stoploss when profit > 3%.
+            double plPercent = (double)((this.Price - this.BuyPrice) / this.BuyPrice);
 
-                // set stoploss to be 1% under maxprice.
-                this.StopLoss = 0.99m * this.MaxPrice;
+            if (plPercent > 0.03)
+            {
+                if (!IsActiveTrailingStops)
+                {
+                    logger.Trace($"Activate OCO on {Ticker}.");
+                }
+                IsActiveTrailingStops = true; // turn on active trailing stops.
+                this.MaxPrice = this.Price;
+            }
+
+            if (IsActiveTrailingStops)
+            {
+                if (this.Price > this.MaxPrice) {
+                    this.MaxPrice = this.Price;
+                    // set stoploss to be 1% under maxprice.
+                    this.StopLoss = 0.99m * this.MaxPrice;
+                }
             }
         }
 
