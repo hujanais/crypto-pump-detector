@@ -146,11 +146,11 @@ namespace PumpDetector.Services
                 }
             }
 
-            // print out the top-3 percentage movers.
-            var biggestMovers = this.Assets.OrderBy(a => a.percentagePriceChange).TakeLast(3);
-            foreach (var bm in biggestMovers)
+            // print out some trade summary
+            var tradedAssets = this.Assets.Where(a => a.HasTrade);
+            foreach (var tA in tradedAssets)
             {
-                logger.Trace($"{bm.TimeStamp} {bm.Ticker}. {bm.percentagePriceChange:0.00}");
+                logger.Trace($"{tA.Ticker}, {tA.BuyPrice:0.000}, { tA.StopLoss:0.000}, {tA.percentagePriceChange:0.00}, {tA.IsActiveTrailingStops}");
             }
 
             logger.Trace("End getCandles");
