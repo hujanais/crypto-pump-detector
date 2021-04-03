@@ -1,0 +1,1180 @@
+<stylecopresultscache>
+  <version>12</version>
+  <project key="-2146919478">
+    <configuration>
+    </configuration>
+  </project>
+  <sourcecode name="Engine.cs" parser="StyleCop.CSharp.CsParser">
+    <timestamps>
+      <styleCop>2020/08/13 17:45:29.349</styleCop>
+      <settingsFile>2020/08/13 17:45:29.310</settingsFile>
+      <sourceFile>2021/04/01 12:28:10.705</sourceFile>
+      <parser>2020/08/13 17:45:29.349</parser>
+      <StyleCop.CSharp.DocumentationRules>2020/08/13 17:45:29.349</StyleCop.CSharp.DocumentationRules>
+      <StyleCop.CSharp.DocumentationRules.FilesHashCode>40364600</StyleCop.CSharp.DocumentationRules.FilesHashCode>
+      <StyleCop.CSharp.LayoutRules>2020/08/13 17:45:29.349</StyleCop.CSharp.LayoutRules>
+      <StyleCop.CSharp.LayoutRules.FilesHashCode>0</StyleCop.CSharp.LayoutRules.FilesHashCode>
+      <StyleCop.CSharp.MaintainabilityRules>2020/08/13 17:45:29.349</StyleCop.CSharp.MaintainabilityRules>
+      <StyleCop.CSharp.MaintainabilityRules.FilesHashCode>0</StyleCop.CSharp.MaintainabilityRules.FilesHashCode>
+      <StyleCop.CSharp.NamingRules>2020/08/13 17:45:29.349</StyleCop.CSharp.NamingRules>
+      <StyleCop.CSharp.NamingRules.FilesHashCode>0</StyleCop.CSharp.NamingRules.FilesHashCode>
+      <StyleCop.CSharp.OrderingRules>2020/08/13 17:45:29.349</StyleCop.CSharp.OrderingRules>
+      <StyleCop.CSharp.OrderingRules.FilesHashCode>0</StyleCop.CSharp.OrderingRules.FilesHashCode>
+      <StyleCop.CSharp.ReadabilityRules>2020/08/13 17:45:29.349</StyleCop.CSharp.ReadabilityRules>
+      <StyleCop.CSharp.ReadabilityRules.FilesHashCode>0</StyleCop.CSharp.ReadabilityRules.FilesHashCode>
+      <StyleCop.CSharp.SpacingRules>2020/08/13 17:45:29.349</StyleCop.CSharp.SpacingRules>
+      <StyleCop.CSharp.SpacingRules.FilesHashCode>0</StyleCop.CSharp.SpacingRules.FilesHashCode>
+    </timestamps>
+    <violations>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="FileMustHaveHeader" ruleCheckId="SA1633">
+        <context>The file has no header, the header Xml is invalid, or the header is not located at the top of the file.</context>
+        <line>1</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>1</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>2</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>3</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>3</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>4</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>5</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives" ruleCheckId="SA1208">
+        <context>System using directives must be placed before all other using directives.</context>
+        <line>5</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>5</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>6</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>7</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives" ruleCheckId="SA1208">
+        <context>System using directives must be placed before all other using directives.</context>
+        <line>7</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>7</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>8</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>8</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>9</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>10</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives" ruleCheckId="SA1208">
+        <context>System using directives must be placed before all other using directives.</context>
+        <line>10</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>10</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>11</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBeOrderedAlphabeticallyByNamespace" ruleCheckId="SA1210">
+        <context>Using directives must be sorted alphabetically by the namespaces.</context>
+        <line>11</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="UsingDirectivesMustBePlacedWithinNamespace" ruleCheckId="SA1200">
+        <context>All using directives must be placed inside of the namespace.</context>
+        <line>12</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The class must have a documentation header.</context>
+        <line>16</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="CodeMustNotContainMultipleBlankLinesInARow" ruleCheckId="SA1507">
+        <context>The code must not contain multiple blank lines in a row.</context>
+        <line>33</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>18</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.OrderingRules" rule="ConstantsMustAppearBeforeFields" ruleCheckId="SA1203">
+        <context>All constants must be placed before all non-constants.</context>
+        <line>30</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>19</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>20</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: Assets.</context>
+        <line>20</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>21</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>23</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>24</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>24</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>25</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>25</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>26</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>26</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: QUOTECURRENCY.</context>
+        <line>26</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>27</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>27</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: PUMPTHRESHOLDPERCENT.</context>
+        <line>27</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>28</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>28</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: PUMPVOLUMETIMES.</context>
+        <line>28</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>30</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>30</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>31</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>31</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The field must have a documentation header.</context>
+        <line>35</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="AccessModifierMustBeDeclared" ruleCheckId="SA1400">
+        <context>The field must have an access modifier.</context>
+        <line>35</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The constructor must have a documentation header.</context>
+        <line>37</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>39</line>
+        <index>1119</index>
+        <endIndex>1121</endIndex>
+        <startLine>39</startLine>
+        <startColumn>13</startColumn>
+        <endLine>39</endLine>
+        <endColumn>15</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>42</line>
+        <index>1206</index>
+        <endIndex>1208</endIndex>
+        <startLine>42</startLine>
+        <startColumn>13</startColumn>
+        <endLine>42</endLine>
+        <endColumn>15</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>44</line>
+        <index>1348</index>
+        <endIndex>1353</endIndex>
+        <startLine>44</startLine>
+        <startColumn>13</startColumn>
+        <endLine>44</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>47</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="OpeningCurlyBracketsMustNotBeFollowedByBlankLine" ruleCheckId="SA1505">
+        <context>An opening curly bracket must not be followed by a blank line.</context>
+        <line>48</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="ClosingCurlyBracketsMustNotBePrecededByBlankLine" ruleCheckId="SA1508">
+        <context>A closing curly bracket must not be preceded by a blank line.</context>
+        <line>50</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>52</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.MaintainabilityRules" rule="ArithmeticExpressionsMustDeclarePrecedence" ruleCheckId="SA1407">
+        <context>Insert parentheses within the arithmetic expression to declare the operator precedence.</context>
+        <line>73</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="ClosingParenthesisMustBeOnLineOfLastParameter" ruleCheckId="SA1111">
+        <context>The closing parenthesis or bracket must be placed on the same line as the last parameter in the parameter list.</context>
+        <line>63</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="SplitParametersMustStartOnLineAfterDeclaration" ruleCheckId="SA1116">
+        <context>If the method parameters are on separate lines, the first parameter must begin on the line beneath the name of the method.</context>
+        <line>86</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="ParameterMustFollowComma" ruleCheckId="SA1115">
+        <context>The parameter must begin on the line after the previous parameter.</context>
+        <line>108</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>54</line>
+        <index>1665</index>
+        <endIndex>1670</endIndex>
+        <startLine>54</startLine>
+        <startColumn>13</startColumn>
+        <endLine>54</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>60</line>
+        <index>1940</index>
+        <endIndex>1942</endIndex>
+        <startLine>60</startLine>
+        <startColumn>33</startColumn>
+        <endLine>60</endLine>
+        <endColumn>35</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to QUOTECURRENCY must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>61</line>
+        <index>2037</index>
+        <endIndex>2049</endIndex>
+        <startLine>61</startLine>
+        <startColumn>74</startColumn>
+        <endLine>61</endLine>
+        <endColumn>86</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>65</line>
+        <index>2155</index>
+        <endIndex>2160</endIndex>
+        <startLine>65</startLine>
+        <startColumn>13</startColumn>
+        <endLine>65</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>76</line>
+        <index>2716</index>
+        <endIndex>2721</endIndex>
+        <startLine>76</startLine>
+        <startColumn>13</startColumn>
+        <endLine>76</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to timer must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>79</line>
+        <index>2847</index>
+        <endIndex>2851</endIndex>
+        <startLine>79</startLine>
+        <startColumn>13</startColumn>
+        <endLine>79</endLine>
+        <endColumn>17</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to doWork must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>79</line>
+        <index>2891</index>
+        <endIndex>2896</endIndex>
+        <startLine>79</startLine>
+        <startColumn>57</startColumn>
+        <endLine>79</endLine>
+        <endColumn>62</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to timer must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>80</line>
+        <index>2923</index>
+        <endIndex>2927</endIndex>
+        <startLine>80</startLine>
+        <startColumn>13</startColumn>
+        <endLine>80</endLine>
+        <endColumn>17</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to socket must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>86</line>
+        <index>3132</index>
+        <endIndex>3137</endIndex>
+        <startLine>86</startLine>
+        <startColumn>17</startColumn>
+        <endLine>86</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>86</line>
+        <index>3147</index>
+        <endIndex>3149</endIndex>
+        <startLine>86</startLine>
+        <startColumn>32</startColumn>
+        <endLine>86</endLine>
+        <endColumn>34</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to socket must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>83</line>
+        <index>3027</index>
+        <endIndex>3032</endIndex>
+        <startLine>83</startLine>
+        <startColumn>17</startColumn>
+        <endLine>83</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="ClosingParenthesisMustBeSpacedCorrectly" ruleCheckId="SA1009">
+        <context>Invalid spacing around the closing parenthesis.</context>
+        <line>63</line>
+        <index>2125</index>
+        <endIndex>2136</endIndex>
+        <startLine>63</startLine>
+        <startColumn>1</startColumn>
+        <endLine>63</endLine>
+        <endColumn>12</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SemicolonsMustBeSpacedCorrectly" ruleCheckId="SA1002">
+        <context>Invalid spacing around the semicolon.</context>
+        <line>74</line>
+        <index>2590</index>
+        <endIndex>2590</endIndex>
+        <startLine>74</startLine>
+        <startColumn>51</startColumn>
+        <endLine>74</endLine>
+        <endColumn>51</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>112</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="ElementMustBeginWithUpperCaseLetter" ruleCheckId="SA1300">
+        <context>method names begin with an upper-case letter: doWork.</context>
+        <line>112</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>114</line>
+        <index>4292</index>
+        <endIndex>4297</endIndex>
+        <startLine>114</startLine>
+        <startColumn>13</startColumn>
+        <endLine>114</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to getWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>117</line>
+        <index>4398</index>
+        <endIndex>4406</endIndex>
+        <startLine>117</startLine>
+        <startColumn>35</startColumn>
+        <endLine>117</endLine>
+        <endColumn>43</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>119</line>
+        <index>4426</index>
+        <endIndex>4431</endIndex>
+        <startLine>119</startLine>
+        <startColumn>13</startColumn>
+        <endLine>119</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>128</line>
+        <index>4732</index>
+        <endIndex>4734</endIndex>
+        <startLine>128</startLine>
+        <startColumn>41</startColumn>
+        <endLine>128</endLine>
+        <endColumn>43</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to PUMPVOLUMETIMES must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>135</line>
+        <index>5338</index>
+        <endIndex>5352</endIndex>
+        <startLine>135</startLine>
+        <startColumn>70</startColumn>
+        <endLine>135</endLine>
+        <endColumn>84</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to PUMPTHRESHOLDPERCENT must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>136</line>
+        <index>5462</index>
+        <endIndex>5481</endIndex>
+        <startLine>136</startLine>
+        <startColumn>71</startColumn>
+        <endLine>136</endLine>
+        <endColumn>90</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to doBuy must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>140</line>
+        <index>5625</index>
+        <endIndex>5629</endIndex>
+        <startLine>140</startLine>
+        <startColumn>25</startColumn>
+        <endLine>140</endLine>
+        <endColumn>29</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>145</line>
+        <index>5800</index>
+        <endIndex>5805</endIndex>
+        <startLine>145</startLine>
+        <startColumn>21</startColumn>
+        <endLine>145</endLine>
+        <endColumn>26</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>153</line>
+        <index>6045</index>
+        <endIndex>6050</endIndex>
+        <startLine>153</startLine>
+        <startColumn>17</startColumn>
+        <endLine>153</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>156</line>
+        <index>6209</index>
+        <endIndex>6214</endIndex>
+        <startLine>156</startLine>
+        <startColumn>13</startColumn>
+        <endLine>156</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>159</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="SingleLineCommentMustBePrecededByBlankLine" ruleCheckId="SA1515">
+        <context>A single-line comment must be preceded by a blank line or another single-line comment, or must be the first item in its scope. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>167</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="ClosingCurlyBracketMustBeFollowedByBlankLine" ruleCheckId="SA1513">
+        <context>Statements or elements wrapped in curly brackets must be followed by a blank line.</context>
+        <line>171</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="SingleLineCommentMustBePrecededByBlankLine" ruleCheckId="SA1515">
+        <context>A single-line comment must be preceded by a blank line or another single-line comment, or must be the first item in its scope. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>193</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="ElementMustBeginWithUpperCaseLetter" ruleCheckId="SA1300">
+        <context>method names begin with an upper-case letter: doBuy.</context>
+        <line>159</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>170</line>
+        <index>6671</index>
+        <endIndex>6678</endIndex>
+        <startLine>170</startLine>
+        <startColumn>37</startColumn>
+        <endLine>170</endLine>
+        <endColumn>44</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to QUOTECURRENCY must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>170</line>
+        <index>6680</index>
+        <endIndex>6692</endIndex>
+        <startLine>170</startLine>
+        <startColumn>46</startColumn>
+        <endLine>170</endLine>
+        <endColumn>58</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>168</line>
+        <index>6574</index>
+        <endIndex>6581</endIndex>
+        <startLine>168</startLine>
+        <startColumn>25</startColumn>
+        <endLine>168</endLine>
+        <endColumn>32</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to QUOTECURRENCY must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>168</line>
+        <index>6595</index>
+        <endIndex>6607</endIndex>
+        <startLine>168</startLine>
+        <startColumn>46</startColumn>
+        <endLine>168</endLine>
+        <endColumn>58</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to balanceLowWaterMark must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>172</line>
+        <index>6756</index>
+        <endIndex>6774</endIndex>
+        <startLine>172</startLine>
+        <startColumn>37</startColumn>
+        <endLine>172</endLine>
+        <endColumn>55</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to stakeSize must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>178</line>
+        <index>7060</index>
+        <endIndex>7068</endIndex>
+        <startLine>178</startLine>
+        <startColumn>63</startColumn>
+        <endLine>178</endLine>
+        <endColumn>71</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>187</line>
+        <index>7410</index>
+        <endIndex>7412</endIndex>
+        <startLine>187</startLine>
+        <startColumn>40</startColumn>
+        <endLine>187</endLine>
+        <endColumn>42</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>188</line>
+        <index>7459</index>
+        <endIndex>7464</endIndex>
+        <startLine>188</startLine>
+        <startColumn>21</startColumn>
+        <endLine>188</endLine>
+        <endColumn>26</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>194</line>
+        <index>7842</index>
+        <endIndex>7849</endIndex>
+        <startLine>194</startLine>
+        <startColumn>25</startColumn>
+        <endLine>194</endLine>
+        <endColumn>32</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to QUOTECURRENCY must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>194</line>
+        <index>7851</index>
+        <endIndex>7863</endIndex>
+        <startLine>194</startLine>
+        <startColumn>34</startColumn>
+        <endLine>194</endLine>
+        <endColumn>46</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to stakeSize must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>194</line>
+        <index>7880</index>
+        <endIndex>7888</endIndex>
+        <startLine>194</startLine>
+        <startColumn>63</startColumn>
+        <endLine>194</endLine>
+        <endColumn>71</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>208</line>
+        <index>8378</index>
+        <endIndex>8383</endIndex>
+        <startLine>208</startLine>
+        <startColumn>21</startColumn>
+        <endLine>208</endLine>
+        <endColumn>26</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to isLiveTrading must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>198</line>
+        <index>7970</index>
+        <endIndex>7982</endIndex>
+        <startLine>198</startLine>
+        <startColumn>35</startColumn>
+        <endLine>198</endLine>
+        <endColumn>47</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>213</line>
+        <index>8607</index>
+        <endIndex>8612</endIndex>
+        <startLine>213</startLine>
+        <startColumn>17</startColumn>
+        <endLine>213</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>214</line>
+        <index>8669</index>
+        <endIndex>8674</endIndex>
+        <startLine>214</startLine>
+        <startColumn>17</startColumn>
+        <endLine>214</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>218</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="ClosingCurlyBracketsMustNotBePrecededByBlankLine" ruleCheckId="SA1508">
+        <context>A closing curly bracket must not be preceded by a blank line.</context>
+        <line>262</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="ElementMustBeginWithUpperCaseLetter" ruleCheckId="SA1300">
+        <context>method names begin with an upper-case letter: doSell.</context>
+        <line>218</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>232</line>
+        <index>9337</index>
+        <endIndex>9344</endIndex>
+        <startLine>232</startLine>
+        <startColumn>25</startColumn>
+        <endLine>232</endLine>
+        <endColumn>32</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to getWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>232</line>
+        <index>9354</index>
+        <endIndex>9362</endIndex>
+        <startLine>232</startLine>
+        <startColumn>42</startColumn>
+        <endLine>232</endLine>
+        <endColumn>50</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>230</line>
+        <index>9247</index>
+        <endIndex>9254</endIndex>
+        <startLine>230</startLine>
+        <startColumn>26</startColumn>
+        <endLine>230</endLine>
+        <endColumn>33</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>237</line>
+        <index>9521</index>
+        <endIndex>9528</endIndex>
+        <startLine>237</startLine>
+        <startColumn>39</startColumn>
+        <endLine>237</endLine>
+        <endColumn>46</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>239</line>
+        <index>9578</index>
+        <endIndex>9583</endIndex>
+        <startLine>239</startLine>
+        <startColumn>25</startColumn>
+        <endLine>239</endLine>
+        <endColumn>30</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>241</line>
+        <index>9705</index>
+        <endIndex>9707</endIndex>
+        <startLine>241</startLine>
+        <startColumn>44</startColumn>
+        <endLine>241</endLine>
+        <endColumn>46</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>249</line>
+        <index>10033</index>
+        <endIndex>10038</endIndex>
+        <startLine>249</startLine>
+        <startColumn>25</startColumn>
+        <endLine>249</endLine>
+        <endColumn>30</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to myWallet must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>235</line>
+        <index>9417</index>
+        <endIndex>9424</endIndex>
+        <startLine>235</startLine>
+        <startColumn>25</startColumn>
+        <endLine>235</endLine>
+        <endColumn>32</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to isLiveTrading must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>224</line>
+        <index>9008</index>
+        <endIndex>9020</endIndex>
+        <startLine>224</startLine>
+        <startColumn>21</startColumn>
+        <endLine>224</endLine>
+        <endColumn>33</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>260</line>
+        <index>10514</index>
+        <endIndex>10519</endIndex>
+        <startLine>260</startLine>
+        <startColumn>17</startColumn>
+        <endLine>260</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>265</line>
+        <index>10707</index>
+        <endIndex>10712</endIndex>
+        <startLine>265</startLine>
+        <startColumn>17</startColumn>
+        <endLine>265</endLine>
+        <endColumn>22</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementReturnValueMustBeDocumented" ruleCheckId="SA1615">
+        <context>The documentation header must contain a returns tag since the element has a return value.</context>
+        <line>272</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="ElementMustBeginWithUpperCaseLetter" ruleCheckId="SA1300">
+        <context>method names begin with an upper-case letter: getWallet.</context>
+        <line>272</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>278</line>
+        <index>11179</index>
+        <endIndex>11181</endIndex>
+        <startLine>278</startLine>
+        <startColumn>32</startColumn>
+        <endLine>278</endLine>
+        <endColumn>34</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to isLiveTrading must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>276</line>
+        <index>11117</index>
+        <endIndex>11129</endIndex>
+        <startLine>276</startLine>
+        <startColumn>17</startColumn>
+        <endLine>276</endLine>
+        <endColumn>29</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.DocumentationRules" rule="ElementsMustBeDocumented" ruleCheckId="SA1600">
+        <context>The method must have a documentation header.</context>
+        <line>284</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="OpeningCurlyBracketsMustNotBeFollowedByBlankLine" ruleCheckId="SA1505">
+        <context>An opening curly bracket must not be followed by a blank line.</context>
+        <line>285</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="SingleLineCommentsMustNotBeFollowedByBlankLine" ruleCheckId="SA1512">
+        <context>A single-line comment must not be followed by a blank line. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>301</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.LayoutRules" rule="ClosingCurlyBracketsMustNotBePrecededByBlankLine" ruleCheckId="SA1508">
+        <context>A closing curly bracket must not be preceded by a blank line.</context>
+        <line>382</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: CompletedTrades.</context>
+        <line>290</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.NamingRules" rule="FieldNamesMustBeginWithLowerCaseLetter" ruleCheckId="SA1306">
+        <context>Variable names and private field names must start with a lower-case letter: STOPLOSSPERCENT.</context>
+        <line>303</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="ClosingParenthesisMustBeOnLineOfLastParameter" ruleCheckId="SA1111">
+        <context>The closing parenthesis or bracket must be placed on the same line as the last parameter in the parameter list.</context>
+        <line>313</line>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to logger must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>287</line>
+        <index>11340</index>
+        <endIndex>11345</endIndex>
+        <startLine>287</startLine>
+        <startColumn>13</startColumn>
+        <endLine>287</endLine>
+        <endColumn>18</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>310</line>
+        <index>12116</index>
+        <endIndex>12118</endIndex>
+        <startLine>310</startLine>
+        <startColumn>33</startColumn>
+        <endLine>310</endLine>
+        <endColumn>35</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>326</line>
+        <index>12811</index>
+        <endIndex>12813</endIndex>
+        <startLine>326</startLine>
+        <startColumn>37</startColumn>
+        <endLine>326</endLine>
+        <endColumn>39</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to api must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>372</line>
+        <index>15246</index>
+        <endIndex>15248</endIndex>
+        <startLine>372</startLine>
+        <startColumn>46</startColumn>
+        <endLine>372</endLine>
+        <endColumn>48</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to doBuy must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>389</line>
+        <index>16037</index>
+        <endIndex>16041</endIndex>
+        <startLine>389</startLine>
+        <startColumn>25</startColumn>
+        <endLine>389</endLine>
+        <endColumn>29</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.ReadabilityRules" rule="PrefixLocalCallsWithThis" ruleCheckId="SA1101">
+        <context>The call to PUMPTHRESHOLDPERCENT must begin with the 'this.' prefix to indicate that the item is a member of the class.</context>
+        <line>385</line>
+        <index>15804</index>
+        <endIndex>15823</endIndex>
+        <startLine>385</startLine>
+        <startColumn>55</startColumn>
+        <endLine>385</endLine>
+        <endColumn>74</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="ClosingParenthesisMustBeSpacedCorrectly" ruleCheckId="SA1009">
+        <context>Invalid spacing around the closing parenthesis.</context>
+        <line>313</line>
+        <index>12319</index>
+        <endIndex>12330</endIndex>
+        <startLine>313</startLine>
+        <startColumn>1</startColumn>
+        <endLine>313</endLine>
+        <endColumn>12</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>394</line>
+        <index>16211</index>
+        <endIndex>16242</endIndex>
+        <startLine>394</startLine>
+        <startColumn>21</startColumn>
+        <endLine>394</endLine>
+        <endColumn>52</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>395</line>
+        <index>16265</index>
+        <endIndex>16267</endIndex>
+        <startLine>395</startLine>
+        <startColumn>21</startColumn>
+        <endLine>395</endLine>
+        <endColumn>23</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>414</line>
+        <index>17396</index>
+        <endIndex>17398</endIndex>
+        <startLine>414</startLine>
+        <startColumn>21</startColumn>
+        <endLine>414</endLine>
+        <endColumn>23</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>416</line>
+        <index>17423</index>
+        <endIndex>17492</endIndex>
+        <startLine>416</startLine>
+        <startColumn>21</startColumn>
+        <endLine>416</endLine>
+        <endColumn>90</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>417</line>
+        <index>17515</index>
+        <endIndex>17517</endIndex>
+        <startLine>417</startLine>
+        <startColumn>21</startColumn>
+        <endLine>417</endLine>
+        <endColumn>23</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>424</line>
+        <index>17868</index>
+        <endIndex>17899</endIndex>
+        <startLine>424</startLine>
+        <startColumn>21</startColumn>
+        <endLine>424</endLine>
+        <endColumn>52</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>428</line>
+        <index>18044</index>
+        <endIndex>18104</endIndex>
+        <startLine>428</startLine>
+        <startColumn>21</startColumn>
+        <endLine>428</endLine>
+        <endColumn>81</endColumn>
+        <warning>False</warning>
+      </violation>
+      <violation namespace="StyleCop.CSharp.SpacingRules" rule="SingleLineCommentsMustBeginWithSingleSpace" ruleCheckId="SA1005">
+        <context>The comment must start with a single space. To ignore this error when commenting out a line of code, begin the comment with '////' rather than '//'.</context>
+        <line>429</line>
+        <index>18127</index>
+        <endIndex>18129</endIndex>
+        <startLine>429</startLine>
+        <startColumn>21</startColumn>
+        <endLine>429</endLine>
+        <endColumn>23</endColumn>
+        <warning>False</warning>
+      </violation>
+    </violations>
+  </sourcecode>
+</stylecopresultscache>

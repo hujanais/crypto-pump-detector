@@ -42,18 +42,6 @@ namespace PumpDetector.Models
         public bool IsActiveTrailingStops { get; set; }
 
         /// <summary>
-        /// Cooldown period of 30 minutes after last sell.
-        /// </summary>
-        public bool CanBuy
-        {
-            get
-            {
-                var timeElapsed = DateTime.UtcNow - LastSellTime;
-                return timeElapsed.TotalSeconds > (30 * 60);
-            }
-        }
-
-        /// <summary>
         /// Prevent selling of coin for first 3 minutes after buy.
         /// </summary>
         public bool CanSell
@@ -62,6 +50,26 @@ namespace PumpDetector.Models
             {
                 var timeElapsed = DateTime.UtcNow - LastBuyTime;
                 return timeElapsed.TotalSeconds > (3 * 60);
+            }
+        }
+
+        /// <summary>
+        /// Signal whether this is a real pump
+        /// Open price lower 1/3 candle
+        /// Close price upper 1/3 candle
+        /// 
+        /// </summary>
+        public bool IsGreenCandle
+        {
+            get
+            {
+                var candlelength = HighPrice - LowPrice;
+                var deltaOpen = OpenPrice - LowPrice;
+                var deltaClose = ClosePrice - LowPrice;
+                var iSOpenGood = deltaOpen < (0.3333m * candlelength);
+                var isCloseGood = deltaClose > (0.6667m * candlelength);
+
+                return iSOpenGood & isCloseGood;
             }
         }
 
@@ -80,6 +88,11 @@ namespace PumpDetector.Models
         }
 
         #region Methods
+
+        public override string ToString()
+        {
+            return $"{Ticker}, {OpenPrice:0.0000}, {HighPrice: 0.0000}, {LowPrice: 0.0000}, {ClosePrice: 0.0000}, {Volume}, {IsGreenCandle}, {percentagePriceChange:0.00}, {PL:0.00}, {HasTrade}";
+        }
 
         // Reset everthing after selling the asset.
         public void Reset()
