@@ -1,15 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\PumpDetectorNET\Models\Asset.cs" Link="Models\Asset.cs" />
-    <Compile Include="..\PumpDetectorNET\Services\Engine.cs" Link="Services\Engine.cs" />
-    <Compile Include="..\PumpDetectorNET\Services\RoundShares.cs" Link="Services\RoundShares.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DigitalRuby.ExchangeSharp" Version="0.7.5" />
@@ -22,11 +16,6 @@
     <None Update="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
