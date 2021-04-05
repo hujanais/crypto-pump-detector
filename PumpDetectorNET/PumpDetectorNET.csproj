@@ -86,11 +86,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Asset.cs" />
+    <Compile Include="..\PumpDetector\Models\Asset.cs">
+      <Link>Models\Asset.cs</Link>
+    </Compile>
+    <Compile Include="..\PumpDetector\Services\Engine.cs">
+      <Link>Services\Engine.cs</Link>
+    </Compile>
+    <Compile Include="..\PumpDetector\Services\RoundShares.cs">
+      <Link>Services\RoundShares.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Engine.cs" />
-    <Compile Include="Services\RoundShares.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config.example" />
