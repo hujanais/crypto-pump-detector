@@ -42,14 +42,14 @@ namespace PumpDetector.Models
         public bool IsActiveTrailingStops { get; set; }
 
         /// <summary>
-        /// Prevent selling of coin for first 3 minutes after buy.
+        /// Prevent selling of coin for first 5 minutes after buy.
         /// </summary>
         public bool CanSell
         {
             get
             {
                 var timeElapsed = DateTime.UtcNow - LastBuyTime;
-                return timeElapsed.TotalSeconds > (3 * 60);
+                return timeElapsed.TotalSeconds > (5 * 60);
             }
         }
 
@@ -75,7 +75,16 @@ namespace PumpDetector.Models
 
         public decimal PL
         {
-            get => ((SellPrice - BuyPrice) / BuyPrice) * 100;
+            get
+            {
+                if (BuyPrice != 0)
+                {
+                    return ((SellPrice - BuyPrice) / BuyPrice) * 100;
+                } else
+                {
+                    return 0;
+                }
+            }
         }
 
         public decimal percentagePriceChange
@@ -89,15 +98,18 @@ namespace PumpDetector.Models
 
         #region Methods
 
+        public void Reset()
+        {
+            this.BuyPrice = 0;
+            this.SellPrice = 0;
+            this.StopLoss = 0;
+            this.HasTrade = false;
+            this.IsActiveTrailingStops = false;
+        }
+
         public override string ToString()
         {
             return $"{Ticker}, {OpenPrice:0.0000}, {HighPrice: 0.0000}, {LowPrice: 0.0000}, {ClosePrice: 0.0000}, {Volume}, {IsGreenCandle}, {percentagePriceChange:0.00}, {PL:0.00}, {HasTrade}";
-        }
-
-        // Reset everthing after selling the asset.
-        public void Reset()
-        {
-
         }
 
         public void UpdatePrices(decimal last, decimal ask, decimal bid)
@@ -124,16 +136,15 @@ namespace PumpDetector.Models
         public void adjustStopLoss()
         {
             // re-adjust stoploss when profit > 3%.
-            double plPercent = (double)((this.Price - this.BuyPrice) / this.BuyPrice);
+            double deltaP = (double)(this.Price / this.BuyPrice);
 
-            if (plPercent > 0.03)
+            if (deltaP > 1.03)
             {
                 if (!IsActiveTrailingStops)
                 {
                     logger.Trace($"Activate OCO on {Ticker}.");
                 }
                 IsActiveTrailingStops = true; // turn on active trailing stops.
-                this.MaxPrice = this.Price;
             }
 
             if (IsActiveTrailingStops)
@@ -142,6 +153,7 @@ namespace PumpDetector.Models
                     this.MaxPrice = this.Price;
                     // set stoploss to be 1% under maxprice.
                     this.StopLoss = 0.99m * this.MaxPrice;
+                    Debug.Write($"Adjust TrailingStopLoss: {this.StopLoss: 0.00}");
                 }
             }
         }

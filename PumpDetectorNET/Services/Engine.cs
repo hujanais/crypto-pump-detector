@@ -159,7 +159,7 @@ namespace PumpDetector.Services
             logger.Trace(String.Join(",", timeStamps));
             foreach (var tA in tradedAssets)
             {
-                logger.Trace($"{tA.Ticker}, {tA.BuyPrice:0.000}, { tA.StopLoss:0.000}, {tA.ClosePrice:0.000}, {tA.IsActiveTrailingStops}");
+                logger.Trace($"{tA.Ticker}, BuyPrice: {tA.BuyPrice:0.000}, StopLoss: { tA.StopLoss:0.000}, Price:{tA.Price:0.000}, ActiveTrailingStop: {tA.IsActiveTrailingStops}");
             }
 
             logger.Trace("End getCandles");
@@ -208,6 +208,7 @@ namespace PumpDetector.Services
                 {
                     asset.HasTrade = true;
                     asset.BuyPrice = asset.Ask;
+                    asset.MaxPrice = asset.BuyPrice;
                     asset.LastBuyTime = DateTime.UtcNow;
 
                     // set the initial stoploss to be 50% of the candle.
@@ -229,7 +230,7 @@ namespace PumpDetector.Services
             try
             {
                 asset.HasTrade = false; // clear the trade no matter what.  set this flag early to prevent over firing from websocket.
-
+                bool isSuccess = false;
                 if (isLiveTrading)
                 {
                     // check to see if we have anything to sell.
@@ -256,18 +257,25 @@ namespace PumpDetector.Services
                         });
 
                         logger.Trace($"Sell: PlaceOrderAsync. {result.MarketSymbol}. Price: ${result.Price}.  Result={result.Result}.  OrderId={result.OrderId}");
+                        isSuccess = true;
                     }
                     else
                     {
                         throw new Exception("Insufficient fund");
                     }
+                } else
+                {
+                    isSuccess = true;
                 }
 
-                asset.HasTrade = false;
-                asset.SellPrice = asset.Bid;
-                asset.LastSellTime = DateTime.UtcNow;
-                logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
-
+                if (isSuccess)
+                {
+                    asset.HasTrade = false;
+                    asset.MaxPrice = 0;
+                    asset.SellPrice = asset.Bid;
+                    asset.LastSellTime = DateTime.UtcNow;
+                    logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
+                }
             }
             catch (Exception ex)
             {
@@ -290,162 +298,78 @@ namespace PumpDetector.Services
             return wallet;
         }
 
-        //public async void BackTest()
-        //{
+        public async void BackTest()
+        {
+            logger.Trace("Starting BackTest");
 
-        //    logger.Trace("Starting BackTest");
-        //    this.isLiveTrading = false;
+            IList<Asset> BackTestAssets = new List<Asset>();
+            IList<Asset> CompletedTrades = new List<Asset>();
 
-        //    IList<Asset> CompletedTrades = new List<Asset>();
+            // flags.
+            bool hasTrade = false;
 
-        //    bool hasTrade = false;
-        //    decimal buyPrice = 0;
-        //    decimal sellPrice = 0;
-        //    decimal stopLossPrice = 0;
-        //    double percentageVolume = 0.0;
-        //    DateTime buyTime = DateTime.Now;
-        //    DateTime sellTime = DateTime.Now;
-        //    Asset trade = null;
+            // coins to remove like stable-coins and BTC, ETH.
+            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP" };
 
-        //    // conditions.
+            var tickers = await api.GetTickersAsync();
+            tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == "USD" &&
+                !coinsToRemove.Contains(t.Value.Volume.BaseCurrency)
+            ).Take(500);
 
-        //    decimal STOPLOSSPERCENT = 0.5m;
+            foreach (var ticker in tickers)
+            {
+                BackTestAssets.Add(new Asset { Ticker = ticker.Key, BaseCurrency = ticker.Value.Volume.BaseCurrency });
+            }
 
-        //    int volumeWindow = 4;
+            int numTickers = BackTestAssets.Count();
+            for (int idx = 0; idx < numTickers; idx++)
+            {
+                var asset = BackTestAssets[idx];
 
-        //    // coins to remove like stable-coins and BTC, ETH.
-        //    string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP" };
+                // get all 5-minute historical candle data.
+                var candles = (await api.GetCandlesAsync(asset.Ticker, 5 * 60, null, null, 500)).ToArray();
 
-        //    var tickers = await api.GetTickersAsync();
-        //    tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == "USD" &&
-        //        !coinsToRemove.Contains(t.Value.Volume.BaseCurrency) // && t.Key.Contains("B")
-        //    ).Take(500);
+                hasTrade = false;
 
-        //    foreach (var ticker in tickers)
-        //    {
-        //        this.Assets.Add(new Asset { Ticker = ticker.Key, BaseCurrency = ticker.Value.Volume.BaseCurrency });
-        //    }
+                for (int j = 1; j < candles.Count()-1; j++)
+                {
+                    var ohlc = candles[j];
+                    var ohlcPrevious = candles[j-1];
 
-        //    int numTickers = this.Assets.Count();
-        //    for (int idx = 0; idx < numTickers; idx++)
-        //    {
-        //        var asset = this.Assets[idx];
+                    asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
-        //        // get all 15-minute historical candle data.
-        //        var candle = (await api.GetCandlesAsync(asset.Ticker, 15 * 60, null, null, 500)).ToArray();
+                    // check for sell condition
+                    if (hasTrade)
+                    {
+                        var plPercentage = (asset.ClosePrice - asset.BuyPrice) / asset.BuyPrice * 100;
+                        if (asset.LowPrice < asset.StopLoss ||
+                            asset.HighPrice > (1.03m * asset.BuyPrice))
+                        {
+                            Debug.WriteLine($"{asset.Ticker}, {plPercentage:0.00}");
+                            hasTrade = false;
+                        }
+                    }
 
-        //        // generate SMA 7, 25.
-        //        List<IQuote> ohlcs = new List<IQuote>();
-        //        foreach (var pt in candle)
-        //        {
-        //            ohlcs.Add(new Quote { Open = pt.OpenPrice, High = pt.HighPrice, Low = pt.LowPrice, Close = pt.ClosePrice, Date = pt.Timestamp, Volume = (decimal)pt.QuoteCurrencyVolume });
-        //        }
+                    // check for buy condition.
+                    if (!hasTrade)
+                    {
+                        bool volumeTrigger = ohlc.QuoteCurrencyVolume > (2 * ohlcPrevious.QuoteCurrencyVolume);
+                        bool priceTrigger = (asset.percentagePriceChange > 2);
+                        bool isGreenCandle = asset.IsGreenCandle;
 
-        //        var sma7 = Indicator.GetSma(ohlcs, 7).ToArray();
-        //        var sma25 = Indicator.GetSma(ohlcs, 25).ToArray();
+                        if (volumeTrigger && priceTrigger && isGreenCandle)
+                        {
+                            asset.BuyPrice = candles[j + 1].OpenPrice;  // buy the opening price of next candle.
+                            //asset.StopLoss = 0.99m * asset.BuyPrice;
+                            asset.StopLoss = (candles[j].HighPrice + candles[j].LowPrice) / 2;
+                            hasTrade = true;                            
+                        }
+                    }
+                }
 
-        //        // candle, sma7, sma25, priceChange%, isPump
-        //        List<Tuple<MarketCandle, decimal, decimal, decimal, bool>> arr = new List<Tuple<MarketCandle, decimal, decimal, decimal, bool>>();
+            }
 
-        //        for (int i = volumeWindow; i < candle.Count() - 4; i++)
-        //        {
-        //            var ts = candle[i].Timestamp;
-        //            var openPrice = candle[i].OpenPrice;
-        //            var closePrice = candle[i].ClosePrice;
-        //            var highPrice = candle[i].HighPrice;
-        //            var lowPrice = candle[i].LowPrice;
-        //            var volume = candle[i].QuoteCurrencyVolume;
-        //            var percentage = (closePrice - openPrice) / openPrice * 100;
-        //            var avgVolume = candle.Skip(i - volumeWindow).Take(volumeWindow).Average(p => p.QuoteCurrencyVolume);
-
-        //            var isPump = (candle[i + 1].ClosePrice > candle[i].ClosePrice) && (candle[i + 2].ClosePrice > candle[i + 1].ClosePrice);
-
-        //            arr.Add(new Tuple<MarketCandle, decimal, decimal, decimal, bool>(candle[i], sma7[i].Sma.GetValueOrDefault(), sma25[i].Sma.GetValueOrDefault(), percentage, isPump));
-
-        //            asset.UpdateOHLC(ts, openPrice, highPrice, lowPrice, closePrice, volume);
-
-        //            // don't really have ask/bid data so simulate.
-        //            asset.Price = asset.ClosePrice;
-        //            asset.Ask = asset.Price;
-        //            asset.Bid = asset.Price;
-
-        //            // adjust the stoploss.
-        //            if (asset.HasTrade)
-        //            {
-        //                asset.adjustStopLoss();
-        //            }
-
-        //            if (asset.HasTrade)
-        //            {
-        //                // pull the 1 minute candle.
-        //                var candle1 = (await api.GetCandlesAsync(asset.Ticker, 1 * 60, asset.LastBuyTime.AddMinutes(1), null, 500)).ToArray();
-        //                foreach (var c in candle1)
-        //                {
-        //                    if (c.LowPrice < asset.StopLoss)
-        //                    {
-        //                        asset.Bid = c.LowPrice;
-        //                        this.doSell(asset);
-        //                    }
-        //                }
-
-        //            }
-
-        //            // buy condition
-        //            if (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT && !asset.HasTrade)
-        //            {
-        //                // the buy is happening on the candle + 1.
-        //                asset.Price = candle[i].OpenPrice;
-        //                doBuy(asset);
-        //                asset.LastBuyTime = candle[i].Timestamp;
-        //            }
-
-        //            // simulate sell strategy.
-        //            //if (hasTrade && trade != null)
-        //            //{
-        //            //    if (candle[i].LowPrice < stopLossPrice)
-        //            //    {
-        //            //        // if low price is under stoploss, exit.
-        //            //        hasTrade = false;
-        //            //        sellPrice = candle[i].LowPrice;
-        //            //        sellTime = candle[i].Timestamp;
-        //            //        var pl = (stopLossPrice - buyPrice) / buyPrice * 100;
-        //            //        // Debug.WriteLine($"{ticker.Key} : {buyTime} to {sellTime}. {pl:0.00}");
-        //            //        trade.SellPrice = stopLossPrice;
-        //            //        CompletedTrades.Add(trade);
-        //            //        trade = null;
-        //            //    }
-        //            //    else if (candle[i].HighPrice > buyPrice)
-        //            //    {
-        //            //        // if high price is higher than buyprice, reset stoploss.
-        //            //        stopLossPrice = candle[i].HighPrice * (1 - STOPLOSSPERCENT / 100);
-        //            //        trade.StopLoss = stopLossPrice;
-        //            //    }
-        //            //}
-
-        //            //if (percentage > PUMPTHRESHOLDPERCENT && !hasTrade && trade == null)
-        //            //{
-        //            //    trade = new Asset();
-        //            //    hasTrade = true;
-        //            //    buyPrice = candle[i + 1].OpenPrice;
-        //            //    buyTime = candle[i + 1].Timestamp;
-        //            //    percentageVolume = (candle[i].QuoteCurrencyVolume - avgVolume) / avgVolume * 100;
-
-        //            //    trade.Ticker = ticker.Key;
-        //            //    trade.TimeStamp = candle[i].Timestamp;
-        //            //    trade.BuyPrice = buyPrice;
-
-        //            //    stopLossPrice = buyPrice * (1 - STOPLOSSPERCENT / 100);
-        //            //}
-        //        }
-
-        //        var sortedArray = arr.OrderByDescending(p => p.Item4);
-        //    }
-
-        //    var sortedTrade = CompletedTrades.OrderBy(c => c.TimeStamp);
-        //    foreach (var ct in sortedTrade)
-        //    {
-        //        Debug.WriteLine($"{ct.Ticker}, {ct.TimeStamp}, {ct.BuyPrice}, {ct.SellPrice}, {ct.PL:0.00}");
-        //    }
-        //}
+            Debug.WriteLine("========= end backtesting =========");
+        }
     }
 }
