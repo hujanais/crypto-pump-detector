@@ -80,7 +80,8 @@ namespace PumpDetector.Models
                 if (BuyPrice != 0)
                 {
                     return ((SellPrice - BuyPrice) / BuyPrice) * 100;
-                } else
+                }
+                else
                 {
                     return 0;
                 }
@@ -103,6 +104,7 @@ namespace PumpDetector.Models
             this.BuyPrice = 0;
             this.SellPrice = 0;
             this.StopLoss = 0;
+            this.MaxPrice = 0;
             this.HasTrade = false;
             this.IsActiveTrailingStops = false;
         }
@@ -149,7 +151,8 @@ namespace PumpDetector.Models
 
             if (IsActiveTrailingStops)
             {
-                if (this.Price > this.MaxPrice) {
+                if (this.Price > this.MaxPrice)
+                {
                     this.MaxPrice = this.Price;
                     // set stoploss to be 1% under maxprice.
                     this.StopLoss = 0.99m * this.MaxPrice;

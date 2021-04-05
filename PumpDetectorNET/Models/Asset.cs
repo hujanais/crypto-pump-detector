@@ -103,6 +103,7 @@ namespace PumpDetector.Models
             this.BuyPrice = 0;
             this.SellPrice = 0;
             this.StopLoss = 0;
+            this.MaxPrice = 0;
             this.HasTrade = false;
             this.IsActiveTrailingStops = false;
         }

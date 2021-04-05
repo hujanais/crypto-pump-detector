@@ -77,7 +77,7 @@ namespace PumpDetector.Services
 
             // Update 5-minute candle once per 5-minutes.
             timer = new Timer(async (objState) => await doWork(objState));
-            timer.Change(secondsAway * 1000, FIVEMINUTES); 
+            timer.Change(secondsAway * 1000, FIVEMINUTES);
 
             // start up web socket.
             if (socket == null)
@@ -97,7 +97,7 @@ namespace PumpDetector.Services
                             if (asset.HasTrade)
                             {
                                 asset.adjustStopLoss();
-                            
+
                                 if (asset.Price < asset.StopLoss && asset.CanSell)
                                 {
                                     this.doSell(asset);
@@ -125,7 +125,7 @@ namespace PumpDetector.Services
                 var ticker = this.Assets[i].Ticker;
                 try
                 {
-                    var candle = (await api.GetCandlesAsync(ticker, 5*60, null, null, 100)).ToArray();
+                    var candle = (await api.GetCandlesAsync(ticker, 5 * 60, null, null, 100)).ToArray();
                     var ohlc = candle[candle.Length - 2];   // note that this is called a minute after the 15/30/45/60 minute so we need to look at the previous candle.
                     var ohlcPrevious = candle[candle.Length - 3];
                     var asset = this.Assets[i];
@@ -141,7 +141,8 @@ namespace PumpDetector.Services
                         {
                             logger.Trace($"{asset.Ticker}, {ohlc.QuoteCurrencyVolume}, {PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume}, {asset.percentagePriceChange}");
                             doBuy(asset);  // initial stoploss calculated in here.
-                        } else
+                        }
+                        else
                         {
                             logger.Trace($"{asset.Ticker}. IsGreenCandle not met. {asset}");
                         }
@@ -263,18 +264,18 @@ namespace PumpDetector.Services
                     {
                         throw new Exception("Insufficient fund");
                     }
-                } else
+                }
+                else
                 {
                     isSuccess = true;
                 }
 
                 if (isSuccess)
                 {
-                    asset.HasTrade = false;
-                    asset.MaxPrice = 0;
                     asset.SellPrice = asset.Bid;
                     asset.LastSellTime = DateTime.UtcNow;
                     logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
+                    asset.Reset();
                 }
             }
             catch (Exception ex)
@@ -331,10 +332,10 @@ namespace PumpDetector.Services
 
                 hasTrade = false;
 
-                for (int j = 1; j < candles.Count()-1; j++)
+                for (int j = 1; j < candles.Count() - 1; j++)
                 {
                     var ohlc = candles[j];
-                    var ohlcPrevious = candles[j-1];
+                    var ohlcPrevious = candles[j - 1];
 
                     asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
@@ -362,7 +363,7 @@ namespace PumpDetector.Services
                             asset.BuyPrice = candles[j + 1].OpenPrice;  // buy the opening price of next candle.
                             //asset.StopLoss = 0.99m * asset.BuyPrice;
                             asset.StopLoss = (candles[j].HighPrice + candles[j].LowPrice) / 2;
-                            hasTrade = true;                            
+                            hasTrade = true;
                         }
                     }
                 }

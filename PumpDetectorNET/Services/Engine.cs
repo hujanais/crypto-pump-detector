@@ -270,11 +270,10 @@ namespace PumpDetector.Services
 
                 if (isSuccess)
                 {
-                    asset.HasTrade = false;
-                    asset.MaxPrice = 0;
                     asset.SellPrice = asset.Bid;
                     asset.LastSellTime = DateTime.UtcNow;
                     logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
+                    asset.Reset();
                 }
             }
             catch (Exception ex)
