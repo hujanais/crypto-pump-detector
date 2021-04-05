@@ -191,7 +191,8 @@ namespace PumpDetector.Services
                         Amount = shares,
                         IsBuy = true,
                         Price = asset.Ask,
-                        MarketSymbol = asset.Ticker
+                        MarketSymbol = asset.Ticker,
+                        OrderType = OrderType.Market
                     };
 
                     var result = await api.PlaceOrderAsync(order);
@@ -231,7 +232,6 @@ namespace PumpDetector.Services
             try
             {
                 asset.HasTrade = false; // clear the trade no matter what.  set this flag early to prevent over firing from websocket.
-                bool isSuccess = false;
                 if (isLiveTrading)
                 {
                     // check to see if we have anything to sell.
@@ -246,7 +246,7 @@ namespace PumpDetector.Services
                     if (myWallet.ContainsKey(asset.BaseCurrency))
                     {
                         amountAvail = myWallet[asset.BaseCurrency];
-
+                        var quoteCurrencyValue = amountAvail * asset.Price;
                         logger.Trace($"TrySell: PlaceOrderAsync. {asset.Ticker}. Amount={amountAvail}");
 
                         var result = await api.PlaceOrderAsync(new ExchangeOrderRequest
@@ -254,33 +254,29 @@ namespace PumpDetector.Services
                             Amount = amountAvail,
                             IsBuy = false,
                             Price = asset.Bid,
-                            MarketSymbol = asset.Ticker
+                            MarketSymbol = asset.Ticker,
+                            OrderType = OrderType.Market
                         });
 
                         logger.Trace($"Sell: PlaceOrderAsync. {result.MarketSymbol}. Price: ${result.Price}.  Result={result.Result}.  OrderId={result.OrderId}");
-                        isSuccess = true;
                     }
                     else
                     {
                         throw new Exception("Insufficient fund");
                     }
                 }
-                else
-                {
-                    isSuccess = true;
-                }
 
-                if (isSuccess)
-                {
-                    asset.SellPrice = asset.Bid;
-                    asset.LastSellTime = DateTime.UtcNow;
-                    logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
-                    asset.Reset();
-                }
+                asset.SellPrice = asset.Bid;
+                asset.LastSellTime = DateTime.UtcNow;
+                logger.Info($"Sell, {asset.Ticker}, {asset.BuyPrice}, {asset.SellPrice}, {asset.StopLoss}, {asset.PL:0.00}");
             }
             catch (Exception ex)
             {
                 logger.Info($"Sell {asset.Ticker} failed with {ex.Message}");
+            }
+            finally
+            {
+                asset.Reset();  // reset the trade even in failure.
             }
         }
 
