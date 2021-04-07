@@ -16,6 +16,7 @@ namespace PumpDetector.Services
     public class Engine : IDisposable
     {
         private ExchangeAPI api;
+        private KlineService klineService;
         private IWebSocket socket;
         private IList<Asset> Assets = new List<Asset>();
         private Dictionary<string, decimal> myWallet;
@@ -24,12 +25,11 @@ namespace PumpDetector.Services
         decimal stakeSize = 50m;
         decimal balanceLowWaterMark = 1000m;
         string QUOTECURRENCY = "USD";
-        decimal PUMPTHRESHOLDPERCENT = 2;
-        double PUMPVOLUMETIMES = 2;
+        decimal PUMPTHRESHOLDPERCENT = 2.5m;
+        double PUMPVOLUMETIMES = 3;
 
         const int FIVEMINUTES = 5 * 60 * 1000;
         Timer timer = null;
-
 
         // https://makolyte.com/nlog-split-trace-logging-into-its-own-file/
         NLog.Logger logger = NLog.LogManager.GetLogger("*");
@@ -38,10 +38,12 @@ namespace PumpDetector.Services
         {
             api = new ExchangeBinanceUSAPI();
 
+            this.klineService = new KlineService(api);
+
             // load in the api keys.
             api.LoadAPIKeysUnsecure(ConfigurationManager.AppSettings.Get("PublicKey"), ConfigurationManager.AppSettings.Get("SecretKey"));
 
-            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, PumpThreshold={PUMPTHRESHOLDPERCENT}, StakeSize={stakeSize}, LowWaterMark={balanceLowWaterMark}");
+            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, PumpVolumeThreshold={PUMPVOLUMETIMES}, PumpThreshold={PUMPTHRESHOLDPERCENT}, StakeSize={stakeSize}, LowWaterMark={balanceLowWaterMark}");
         }
 
         public void Dispose()
@@ -79,6 +81,9 @@ namespace PumpDetector.Services
             timer = new Timer(async (objState) => await doWork(objState));
             timer.Change(secondsAway * 1000, FIVEMINUTES);
 
+            // startup the kline websocket
+            // await klineService.GetWebsocketKlines(this.Assets.Select(s => s.Ticker.ToLowerInvariant()), KlineInterval.kline_1m);
+
             // start up web socket.
             if (socket == null)
             {
@@ -96,9 +101,17 @@ namespace PumpDetector.Services
 
                             if (asset.HasTrade)
                             {
-                                asset.adjustStopLoss();
+                                //asset.adjustStopLoss();
 
-                                if (asset.Price < asset.StopLoss && asset.CanSell)
+                                //if (asset.Price < asset.StopLoss && asset.CanSell)
+                                //{
+                                //    this.doSell(asset);
+                                //}
+
+                                // pesismistic sell method. +/- 1.5% PL.
+                                var isTakeLoss = asset.CanSell && (asset.PL < -0.5m);
+                                var isTakeProfit = (asset.PL > 1.5m);
+                                if (isTakeLoss || isTakeProfit)
                                 {
                                     this.doSell(asset);
                                 }
@@ -117,6 +130,7 @@ namespace PumpDetector.Services
             this.myWallet = await getWallet();
 
             logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
+
 
             int numTickers = this.Assets.Count();
 

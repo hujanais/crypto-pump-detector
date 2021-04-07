@@ -89,8 +89,14 @@
     <Compile Include="..\PumpDetector\Models\Asset.cs">
       <Link>Models\Asset.cs</Link>
     </Compile>
+    <Compile Include="..\PumpDetector\Models\Kline.cs">
+      <Link>Models\Kline.cs</Link>
+    </Compile>
     <Compile Include="..\PumpDetector\Services\Engine.cs">
       <Link>Services\Engine.cs</Link>
+    </Compile>
+    <Compile Include="..\PumpDetector\Services\KlineService.cs">
+      <Link>Services\KlineService.cs</Link>
     </Compile>
     <Compile Include="..\PumpDetector\Services\RoundShares.cs">
       <Link>Services\RoundShares.cs</Link>
