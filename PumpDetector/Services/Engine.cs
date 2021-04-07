@@ -22,7 +22,7 @@ namespace PumpDetector.Services
         private Dictionary<string, decimal> myWallet;
 
         private bool isLiveTrading = true;
-        decimal stakeSize = 50m;
+        decimal stakeSize = 20m;
         decimal balanceLowWaterMark = 1000m;
         string QUOTECURRENCY = "USD";
         decimal PUMPTHRESHOLDPERCENT = 2.5m;
@@ -132,6 +132,7 @@ namespace PumpDetector.Services
                 try
                 {
                     var candle = (await api.GetCandlesAsync(ticker, 5 * 60, null, null, 100)).ToArray();
+                    var currentOHLC = candle[candle.Length - 1];
                     var ohlc = candle[candle.Length - 2];   // note that this is called a minute after the 15/30/45/60 minute so we need to look at the previous candle.
                     var ohlcPrevious = candle[candle.Length - 3];
                     var asset = this.Assets[i];
@@ -140,18 +141,11 @@ namespace PumpDetector.Services
 
                     bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
                     bool priceTrigger = (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT);
+                    bool closePriceTrigger = (currentOHLC.ClosePrice > ohlc.HighPrice); // when current price is higher than the previous high price. 
 
-                    if (volumeTrigger && priceTrigger && !asset.HasTrade)
+                    if (volumeTrigger && priceTrigger && closePriceTrigger && asset.IsGreenCandle && !asset.HasTrade)
                     {
-                        if (asset.IsGreenCandle)
-                        {
-                            logger.Trace($"{asset.Ticker}, {ohlc.QuoteCurrencyVolume}, {PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume}, {asset.percentagePriceChange}");
-                            doBuy(asset);  // initial stoploss calculated in here.
-                        }
-                        else
-                        {
-                            logger.Trace($"{asset.Ticker}. IsGreenCandle not met. {asset}");
-                        }
+                        doBuy(asset);  // initial stoploss calculated in here.
                     }
                 }
                 catch (Exception ex)
@@ -202,7 +196,7 @@ namespace PumpDetector.Services
                     };
 
                     var result = await api.PlaceOrderAsync(order);
-                    logger.Trace($"BUY: PlaceOrderAsync. {result.MarketSymbol} ${result.Price}.  {result.Result}. {result.OrderId}");
+                    logger.Trace($"TRY BUY, {result.MarketSymbol}, {result.Price}, {result.Result}, {result.OrderId}");
 
                     if (result.Result != ExchangeAPIOrderResult.Error)
                     {
@@ -220,9 +214,9 @@ namespace PumpDetector.Services
                     asset.LastBuyTime = DateTime.UtcNow;
 
                     // set the initial stoploss as 0.5% of buy price.
-                    asset.StopLoss = 0.99m*asset.BuyPrice;
+                    asset.StopLoss = 0.99m * asset.BuyPrice;
 
-                    logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}, {asset.percentagePriceChange:0.00}");
+                    logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}");
                 }
             }
             catch (Exception ex)
