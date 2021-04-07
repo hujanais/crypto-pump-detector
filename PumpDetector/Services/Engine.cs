@@ -101,17 +101,9 @@ namespace PumpDetector.Services
 
                             if (asset.HasTrade)
                             {
-                                //asset.adjustStopLoss();
+                                asset.adjustStopLoss();
 
-                                //if (asset.Price < asset.StopLoss && asset.CanSell)
-                                //{
-                                //    this.doSell(asset);
-                                //}
-
-                                // pesismistic sell method. +/- 1.5% PL.
-                                var isTakeLoss = asset.CanSell && (asset.PL < -0.5m);
-                                var isTakeProfit = (asset.PL > 1.5m);
-                                if (isTakeLoss || isTakeProfit)
+                                if (asset.Price < asset.StopLoss && asset.CanSell)
                                 {
                                     this.doSell(asset);
                                 }
@@ -227,9 +219,8 @@ namespace PumpDetector.Services
                     asset.MaxPrice = asset.BuyPrice;
                     asset.LastBuyTime = DateTime.UtcNow;
 
-                    // set the initial stoploss to be 50% of the candle.
-                    var midpoint = (asset.LowPrice + asset.HighPrice) / 2;
-                    asset.StopLoss = midpoint;
+                    // set the initial stoploss as 0.5% of buy price.
+                    asset.StopLoss = 0.99m*asset.BuyPrice;
 
                     logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}, {asset.percentagePriceChange:0.00}");
                 }

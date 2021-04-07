@@ -67,7 +67,7 @@ namespace PumpDetector.Models
                 var deltaOpen = OpenPrice - LowPrice;
                 var deltaClose = ClosePrice - LowPrice;
                 var iSOpenGood = deltaOpen < (0.3333m * candlelength);
-                var isCloseGood = deltaClose > (0.6667m * candlelength);
+                var isCloseGood = deltaClose > (0.90m * candlelength);
 
                 return iSOpenGood & isCloseGood;
             }
