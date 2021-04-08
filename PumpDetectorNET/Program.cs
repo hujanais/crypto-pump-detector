@@ -16,8 +16,8 @@ namespace PumpDetectorNET
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Engine engine = new Engine();
-            // engine.BackTest();
-            engine.StartYourEngines();
+            engine.BackTest();
+            // engine.StartYourEngines();
 
             Console.WriteLine("Press Enter key to stop");
             Console.Read();  // This works with Linux.

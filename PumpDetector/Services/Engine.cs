@@ -141,7 +141,7 @@ namespace PumpDetector.Services
 
                     bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
                     bool priceTrigger = (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT);
-                    bool closePriceTrigger = (currentOHLC.ClosePrice > ohlc.HighPrice); // when current price is higher than the previous high price. 
+                    bool closePriceTrigger = (asset.Price > ohlc.ClosePrice); // when current price is higher than the previous high price. 
 
                     if (volumeTrigger && priceTrigger && closePriceTrigger && asset.IsGreenCandle && !asset.HasTrade)
                     {
@@ -327,39 +327,21 @@ namespace PumpDetector.Services
 
                 hasTrade = false;
 
-                for (int j = 1; j < candles.Count() - 1; j++)
+                for (int j = 2; j < candles.Count() - 1; j++)
                 {
-                    var ohlc = candles[j];
-                    var ohlcPrevious = candles[j - 1];
+                    var currentOHLC = candles[j];
+                    var ohlc = candles[j - 1];
+                    var ohlcPrevious = candles[j - 2];
 
                     asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
 
-                    // check for sell condition
-                    if (hasTrade)
-                    {
-                        var plPercentage = (asset.ClosePrice - asset.BuyPrice) / asset.BuyPrice * 100;
-                        if (asset.LowPrice < asset.StopLoss ||
-                            asset.HighPrice > (1.03m * asset.BuyPrice))
-                        {
-                            Debug.WriteLine($"{asset.Ticker}, {plPercentage:0.00}");
-                            hasTrade = false;
-                        }
-                    }
+                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
+                    bool priceTrigger = (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT);
+                    bool closePriceTrigger = (currentOHLC.OpenPrice > ohlc.ClosePrice); // when current price is higher than the previous high price. 
 
-                    // check for buy condition.
-                    if (!hasTrade)
+                    if (volumeTrigger && priceTrigger && closePriceTrigger && asset.IsGreenCandle && !asset.HasTrade)
                     {
-                        bool volumeTrigger = ohlc.QuoteCurrencyVolume > (2 * ohlcPrevious.QuoteCurrencyVolume);
-                        bool priceTrigger = (asset.percentagePriceChange > 2);
-                        bool isGreenCandle = asset.IsGreenCandle;
-
-                        if (volumeTrigger && priceTrigger && isGreenCandle)
-                        {
-                            asset.BuyPrice = candles[j + 1].OpenPrice;  // buy the opening price of next candle.
-                            //asset.StopLoss = 0.99m * asset.BuyPrice;
-                            asset.StopLoss = (candles[j].HighPrice + candles[j].LowPrice) / 2;
-                            hasTrade = true;
-                        }
+                        Debug.WriteLine($"{asset.Ticker}, {ohlc.Timestamp}");
                     }
                 }
 
