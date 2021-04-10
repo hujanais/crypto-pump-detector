@@ -21,6 +21,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Button Content="Load Json"
+                Command="{Binding LoadJsonCommand}"
+                Margin="5" />
         <lvc:CartesianChart Grid.Row="1"
                             DisableAnimations="True"
                             Series="{Binding SeriesCollection}">

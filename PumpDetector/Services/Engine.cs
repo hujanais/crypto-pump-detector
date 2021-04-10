@@ -22,7 +22,7 @@ namespace PumpDetector.Services
         private Dictionary<string, decimal> myWallet;
 
         private bool isLiveTrading = true;
-        decimal stakeSize = 20m;
+        decimal stakeSize = 200m;
         decimal balanceLowWaterMark = 1000m;
         string QUOTECURRENCY = "USD";
         decimal PUMPTHRESHOLDPERCENT = 2.5m;
@@ -72,47 +72,108 @@ namespace PumpDetector.Services
             }
 
             var currentTime = DateTime.UtcNow;
-            var remainder = (currentTime.Minute * 60 + currentTime.Second) % 300;
-            var secondsAway = 300 - remainder + 15;// don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 15 seconds.
+            int PERIODSECS = 1800;  // every 30mins.
+            var remainder = (currentTime.Minute * 60 + currentTime.Second) % PERIODSECS;
+            var secondsAway = PERIODSECS - remainder + 60;// don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 60 seconds.
 
             logger.Trace($"App starting in {secondsAway} seconds.");
 
             // Update 5-minute candle once per 5-minutes.
             timer = new Timer(async (objState) => await doWork(objState));
-            timer.Change(secondsAway * 1000, FIVEMINUTES);
-
-            // startup the kline websocket
-            // await klineService.GetWebsocketKlines(this.Assets.Select(s => s.Ticker.ToLowerInvariant()), KlineInterval.kline_1m);
+            timer.Change(secondsAway * 1000, PERIODSECS * 1000);
 
             // start up web socket.
-            if (socket == null)
-            {
-                var numOfTickers = this.Assets.Count();
-                socket = await api.GetTickersWebSocketAsync(items =>
-                {
-                    for (int i = 0; i < numOfTickers; i++)
-                    {
-                        var tkr = this.Assets[i].Ticker;
-                        var foundTkr = items.FirstOrDefault(p => p.Key == tkr);
-                        var asset = this.Assets[i];
-                        if (foundTkr.Value != null)
-                        {
-                            asset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
+            //if (socket == null)
+            //{
+            //    var numOfTickers = this.Assets.Count();
+            //    socket = await api.GetTickersWebSocketAsync(items =>
+            //    {
+            //        for (int i = 0; i < numOfTickers; i++)
+            //        {
+            //            var tkr = this.Assets[i].Ticker;
+            //            var foundTkr = items.FirstOrDefault(p => p.Key == tkr);
+            //            var asset = this.Assets[i];
+            //            if (foundTkr.Value != null)
+            //            {
+            //                asset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
 
-                            if (asset.HasTrade)
-                            {
-                                asset.adjustStopLoss();
+            //                if (asset.HasTrade)
+            //                {
+            //                    asset.adjustStopLoss();
 
-                                if (asset.Price < asset.StopLoss && asset.CanSell)
-                                {
-                                    this.doSell(asset);
-                                }
-                            }
-                        }
-                    }
-                }, tickers.Select(t => t.Key).ToArray());
-            }
+            //                    if (asset.Price < asset.StopLoss && asset.CanSell)
+            //                    {
+            //                        this.doSell(asset);
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }, tickers.Select(t => t.Key).ToArray());
+            //}
         }
+
+        //public async void StartYourEngines()
+        //{
+        //    logger.Trace("Enumerate Markets");
+
+        //    // enumerate all markets
+        //    // coins to remove like stable-coins and BTC, ETH.
+        //    string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP" };
+
+        //    var tickers = await api.GetTickersAsync();
+        //    tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == QUOTECURRENCY &&
+        //        !coinsToRemove.Contains(t.Value.Volume.BaseCurrency)
+        //    );
+
+        //    logger.Trace($"Enumerated {tickers.Count()} markets.");
+
+        //    foreach (var ticker in tickers)
+        //    {
+        //        this.Assets.Add(new Asset { Ticker = ticker.Key, BaseCurrency = ticker.Value.Volume.BaseCurrency });
+        //    }
+
+        //    var currentTime = DateTime.UtcNow;
+        //    var remainder = (currentTime.Minute * 60 + currentTime.Second) % 300;
+        //    var secondsAway = 300 - remainder + 15;// don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 15 seconds.
+
+        //    logger.Trace($"App starting in {secondsAway} seconds.");
+
+        //    // Update 5-minute candle once per 5-minutes.
+        //    timer = new Timer(async (objState) => await doWork(objState));
+        //    timer.Change(secondsAway * 1000, FIVEMINUTES);
+
+        //    // startup the kline websocket
+        //    // await klineService.GetWebsocketKlines(this.Assets.Select(s => s.Ticker.ToLowerInvariant()), KlineInterval.kline_1m);
+
+        //    // start up web socket.
+        //    if (socket == null)
+        //    {
+        //        var numOfTickers = this.Assets.Count();
+        //        socket = await api.GetTickersWebSocketAsync(items =>
+        //        {
+        //            for (int i = 0; i < numOfTickers; i++)
+        //            {
+        //                var tkr = this.Assets[i].Ticker;
+        //                var foundTkr = items.FirstOrDefault(p => p.Key == tkr);
+        //                var asset = this.Assets[i];
+        //                if (foundTkr.Value != null)
+        //                {
+        //                    asset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
+
+        //                    if (asset.HasTrade)
+        //                    {
+        //                        asset.adjustStopLoss();
+
+        //                        if (asset.Price < asset.StopLoss && asset.CanSell)
+        //                        {
+        //                            this.doSell(asset);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }, tickers.Select(t => t.Key).ToArray());
+        //    }
+        //}
 
         public async Task doWork(object objState)
         {
@@ -123,29 +184,40 @@ namespace PumpDetector.Services
 
             logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
 
-
             int numTickers = this.Assets.Count();
 
             for (int i = 0; i < numTickers; i++)
             {
-                var ticker = this.Assets[i].Ticker;
+                var asset = this.Assets[i];
+                var ticker = asset.Ticker;
                 try
                 {
-                    var candle = (await api.GetCandlesAsync(ticker, 5 * 60, null, null, 100)).ToArray();
-                    var currentOHLC = candle[candle.Length - 1];
-                    var ohlc = candle[candle.Length - 2];   // note that this is called a minute after the 15/30/45/60 minute so we need to look at the previous candle.
-                    var ohlcPrevious = candle[candle.Length - 3];
-                    var asset = this.Assets[i];
-                    asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
-                    Console.Write(".");
+                    var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 100)).ToArray();
 
-                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
-                    bool priceTrigger = (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT);
-                    bool closePriceTrigger = (asset.Price > ohlc.ClosePrice); // when current price is higher than the previous high price. 
-
-                    if (volumeTrigger && priceTrigger && closePriceTrigger && asset.IsGreenCandle && !asset.HasTrade)
+                    IList<Quote> history = new List<Quote>();
+                    foreach (var candle in candles)
                     {
-                        doBuy(asset);  // initial stoploss calculated in here.
+                        history.Add(new Quote
+                        {
+                            Date = candle.Timestamp,
+                            Open = candle.OpenPrice,
+                            High = candle.HighPrice,
+                            Low = candle.LowPrice,
+                            Close = candle.ClosePrice,
+                            Volume = (decimal)candle.QuoteCurrencyVolume
+                        });
+                    }
+
+                    // calculate RSI(14)
+                    IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+
+                    // remember to throw out the last candle because that is the active candle that is not completed yet.
+                    if (rsi.Last().Rsi < 30 && !asset.HasTrade)
+                    {
+                        doBuy(asset);
+                    } else if (rsi.Last().Rsi > 70 && asset.HasTrade)
+                    {
+                        doSell(asset);
                     }
                 }
                 catch (Exception ex)
@@ -303,6 +375,7 @@ namespace PumpDetector.Services
 
             // flags.
             bool hasTrade = false;
+            MarketCandle buyCandle = null, sellCandle = null;
 
             // coins to remove like stable-coins and BTC, ETH.
             string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP" };
@@ -310,7 +383,7 @@ namespace PumpDetector.Services
             var tickers = await api.GetTickersAsync();
             tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == "USD" &&
                 !coinsToRemove.Contains(t.Value.Volume.BaseCurrency)
-            ).Take(500);
+            ).Take(10);
 
             foreach (var ticker in tickers)
             {
@@ -322,29 +395,41 @@ namespace PumpDetector.Services
             {
                 var asset = BackTestAssets[idx];
 
-                // get all 5-minute historical candle data.
-                var candles = (await api.GetCandlesAsync(asset.Ticker, 5 * 60, null, null, 500)).ToArray();
+                // get 1-hour candles
+                var candles = (await api.GetCandlesAsync(asset.Ticker, 30 * 60, null, null, 500)).ToArray();
 
-                hasTrade = false;
-
-                for (int j = 2; j < candles.Count() - 1; j++)
+                IList<Quote> history = new List<Quote>();
+                foreach (var candle in candles)
                 {
-                    var currentOHLC = candles[j];
-                    var ohlc = candles[j - 1];
-                    var ohlcPrevious = candles[j - 2];
-
-                    asset.UpdateOHLC(ohlc.Timestamp, ohlc.OpenPrice, ohlc.HighPrice, ohlc.LowPrice, ohlc.ClosePrice, ohlc.QuoteCurrencyVolume);
-
-                    bool volumeTrigger = ohlc.QuoteCurrencyVolume > (PUMPVOLUMETIMES * ohlcPrevious.QuoteCurrencyVolume);
-                    bool priceTrigger = (asset.percentagePriceChange > PUMPTHRESHOLDPERCENT);
-                    bool closePriceTrigger = (currentOHLC.OpenPrice > ohlc.ClosePrice); // when current price is higher than the previous high price. 
-
-                    if (volumeTrigger && priceTrigger && closePriceTrigger && asset.IsGreenCandle && !asset.HasTrade)
-                    {
-                        Debug.WriteLine($"{asset.Ticker}, {ohlc.Timestamp}");
-                    }
+                    history.Add(new Quote { 
+                        Date = candle.Timestamp,
+                        Open = candle.OpenPrice,
+                        High = candle.HighPrice,
+                        Low = candle.LowPrice,
+                        Close = candle.ClosePrice,
+                        Volume = (decimal)candle.QuoteCurrencyVolume
+                    });
                 }
 
+                // calculate RSI(14)
+                IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+
+                hasTrade = false;
+                for (int j = 0; j < candles.Length-1; j++) { 
+                    if (rsi[j].Rsi < 30 && !hasTrade)
+                    {
+                        hasTrade = true;
+                        buyCandle = candles[j + 1];
+                        // Debug.WriteLine($"Buy, {buyCandle.OpenPrice}, {buyCandle.HighPrice}");
+                    } else if (rsi[j].Rsi > 70 && hasTrade)
+                    {
+                        hasTrade = false;
+                        sellCandle = candles[j + 1];
+                        var lowPL = (sellCandle.LowPrice - buyCandle.HighPrice)/buyCandle.HighPrice * 100;
+                        var pl = (sellCandle.OpenPrice - buyCandle.OpenPrice)/buyCandle.OpenPrice * 100;
+                        Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}");
+                    }
+                }
             }
 
             Debug.WriteLine("========= end backtesting =========");
