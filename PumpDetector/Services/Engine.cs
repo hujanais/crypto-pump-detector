@@ -196,10 +196,6 @@ namespace PumpDetector.Services
                     var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 200)).ToArray();
                     var cc = candles[candles.Count() - 2];
 
-                    var et = await api.GetTickerAsync(asset.Ticker);
-                    asset.UpdatePrices(et.Last, et.Ask, et.Bid);
-                    asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
-
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
                     {
@@ -221,9 +217,15 @@ namespace PumpDetector.Services
                     // remember to throw out the last candle because that is the active candle that is not completed yet.
                     if (completedRSI.Rsi < 30 && !asset.HasTrade)
                     {
+                        var et = await api.GetTickerAsync(asset.Ticker);
+                        asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                        asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
                         doBuy(asset);
                     } else if (completedRSI.Rsi > 70 && asset.HasTrade)
                     {
+                        var et = await api.GetTickerAsync(asset.Ticker);
+                        asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                        asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
                         doSell(asset);
                     }
                 }
