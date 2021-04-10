@@ -192,7 +192,7 @@ namespace PumpDetector.Services
                 var ticker = asset.Ticker;
                 try
                 {
-                    var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 100)).ToArray();
+                    var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 200)).ToArray();
 
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
