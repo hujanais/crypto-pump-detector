@@ -192,7 +192,13 @@ namespace PumpDetector.Services
                 var ticker = asset.Ticker;
                 try
                 {
+                    Console.Write(".");
                     var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 200)).ToArray();
+                    var cc = candles[candles.Count() - 2];
+
+                    var et = await api.GetTickerAsync(asset.Ticker);
+                    asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                    asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
 
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
@@ -210,12 +216,13 @@ namespace PumpDetector.Services
 
                     // calculate RSI(14)
                     IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+                    var completedRSI = rsi[rsi.Count - 2];
 
                     // remember to throw out the last candle because that is the active candle that is not completed yet.
-                    if (rsi.Last().Rsi < 30 && !asset.HasTrade)
+                    if (completedRSI.Rsi < 30 && !asset.HasTrade)
                     {
                         doBuy(asset);
-                    } else if (rsi.Last().Rsi > 70 && asset.HasTrade)
+                    } else if (completedRSI.Rsi > 70 && asset.HasTrade)
                     {
                         doSell(asset);
                     }
@@ -318,8 +325,8 @@ namespace PumpDetector.Services
                     {
                         amountAvail = myWallet[asset.BaseCurrency];
                         var quoteCurrencyValue = amountAvail * asset.Price;
-                        logger.Trace($"TrySell: PlaceOrderAsync. {asset.Ticker}. Amount={amountAvail}");
 
+                        logger.Trace($"TrySell: PlaceOrderAsync. {asset.Ticker}. Amount={amountAvail}");
                         var result = await api.PlaceOrderAsync(new ExchangeOrderRequest
                         {
                             Amount = amountAvail,
