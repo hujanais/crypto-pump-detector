@@ -26,6 +26,8 @@ namespace PumpDetector.Models
         public decimal Ask { get; set; }
         public decimal MaxPrice { get; set; }
 
+        public decimal RSI { get; set; }
+
         /// <summary>
         /// Use to handle cooldown time.
         /// </summary>

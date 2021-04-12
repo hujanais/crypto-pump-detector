@@ -214,18 +214,19 @@ namespace PumpDetector.Services
                     IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
                     var completedRSI = rsi[rsi.Count - 2];
 
+                    asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
+                    asset.RSI = completedRSI.Rsi.Value;
+
                     // remember to throw out the last candle because that is the active candle that is not completed yet.
                     if (completedRSI.Rsi < 30 && !asset.HasTrade)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
-                        asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
                         doBuy(asset);
                     } else if (completedRSI.Rsi > 70 && asset.HasTrade)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
-                        asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
                         doSell(asset);
                     }
                 }
@@ -241,7 +242,7 @@ namespace PumpDetector.Services
             logger.Trace(String.Join(",", timeStamps));
             foreach (var tA in tradedAssets)
             {
-                logger.Trace($"{tA.Ticker}, BuyPrice: {tA.BuyPrice:0.000}, StopLoss: { tA.StopLoss:0.000}, Price:{tA.Price:0.000}, ActiveTrailingStop: {tA.IsActiveTrailingStops}");
+                logger.Trace($"{tA.Ticker}, BuyPrice: {tA.BuyPrice:0.000}, ClosePrice:{tA.ClosePrice:0.000}, RSI: {tA.RSI:0.00}");
             }
 
             logger.Trace("End getCandles");
