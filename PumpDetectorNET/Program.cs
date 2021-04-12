@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PumpDetectorNET
@@ -16,11 +17,18 @@ namespace PumpDetectorNET
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Engine engine = new Engine();
-            engine.BackTest();
-            // engine.StartYourEngines();
+            //engine.PeekAccount();
+            //engine.BackTest();
+            engine.StartYourEngines();
 
-            Console.WriteLine("Press Enter key to stop");
-            Console.Read();  // This works with Linux.
+            Console.WriteLine("Press ESC to stop");
+            do
+            {
+                while (!Console.KeyAvailable)
+                {
+                    Thread.Sleep(10);
+                }
+            } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
