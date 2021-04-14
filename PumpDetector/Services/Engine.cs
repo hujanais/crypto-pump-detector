@@ -110,10 +110,27 @@ namespace PumpDetector.Services
         {
             logger.Trace("Start getCandles");
 
-            // update the wallet.
-            this.myWallet = await getWallet();
+            // retry 10 times and if still fails, just skip this timestamp.
+            for (int retry = 0; retry < 10; retry++)
+            {
+                try
+                {
+                    // update the wallet.
+                    this.myWallet = await getWallet();
+                    logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
+                    break;
+                } catch (Exception ex)
+                {
+                    logger.Trace($"retry-{retry} wallet. {ex}");
 
-            logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
+                    if (retry >= 9)
+                    {
+                        throw new Exception("Give up after 10 tries");
+                    }
+
+                    Thread.Sleep(30000);
+                }
+            }
 
             int numTickers = this.Assets.Count();
 
