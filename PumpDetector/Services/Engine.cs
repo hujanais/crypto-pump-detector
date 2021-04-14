@@ -68,17 +68,17 @@ namespace PumpDetector.Services
 
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
-                //("ETCUSD", 19.217m ),
-                //("ZECUSD",  214.16m),
-                //("QTUMUSD", 14.607m),
-                //("ONTUSD", 1.8626m),
-                //("ZILUSD", 0.1976m),
-                //("VETUSD", 0.1282m),
-                //("EOSUSD", 6.3253m),
-                //("KNCUSD", 3.458m),
-                //("VTHOUSD", 0.0152m),
-                //("EGLDUSD", 220.748m),
-                //("OXTUSD", 0.7733m)
+                ("ONTUSD", 1.8626m),
+                ("ZILUSD", 0.1976m),
+                ("KNCUSD", 3.458m),
+                ("VTHOUSD", 0.0152m),
+                ("HNTUSD", 15.2751m),
+                ("OXTUSD", 0.7733m),
+                ("XTZUSD", 6.3322m),
+                ("ENJUSD", 2.83m),
+                ("ICXUSD", 2.4107m),
+                ("WAVESUSD", 14.8026m),
+                ("ALGOUSD", 1.424m),
             };
 
             foreach (var ticker in tickers)
@@ -383,17 +383,17 @@ namespace PumpDetector.Services
         public async void PeekAccount()
         {
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("ETCUSD", 19.217m ),
-                ("ZECUSD",  214.16m),
-                ("QTUMUSD", 14.607m),
                 ("ONTUSD", 1.8626m),
                 ("ZILUSD", 0.1976m),
-                ("VETUSD", 0.1282m),
-                ("EOSUSD", 6.3253m),
                 ("KNCUSD", 3.458m),
                 ("VTHOUSD", 0.0152m),
-                ("EGLDUSD", 220.748m),
-                ("OXTUSD", 0.7733m)
+                ("HNTUSD", 15.2751m),
+                ("OXTUSD", 0.7733m),
+                ("XTZUSD", 6.3322m),
+                ("ENJUSD", 2.83m),
+                ("ICXUSD", 2.4107m),
+                ("WAVESUSD", 14.8026m),
+                ("ALGOUSD", 1.424m),
             };
 
             var response = (await api.GetTickersAsync()).ToList();
