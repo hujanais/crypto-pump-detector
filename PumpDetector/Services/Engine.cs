@@ -69,15 +69,12 @@ namespace PumpDetector.Services
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
                 ("ONTUSD", 1.8626m),
-                ("ZILUSD", 0.1976m),
                 ("KNCUSD", 3.458m),
-                ("VTHOUSD", 0.0152m),
                 ("HNTUSD", 15.2751m),
                 ("OXTUSD", 0.7733m),
                 ("XTZUSD", 6.3322m),
                 ("ENJUSD", 2.83m),
                 ("ICXUSD", 2.4107m),
-                ("WAVESUSD", 14.8026m),
                 ("ALGOUSD", 1.424m),
             };
 
@@ -401,15 +398,12 @@ namespace PumpDetector.Services
         {
             var openTickers = new ValueTuple<string, decimal>[] {
                 ("ONTUSD", 1.8626m),
-                ("ZILUSD", 0.1976m),
                 ("KNCUSD", 3.458m),
-                ("VTHOUSD", 0.0152m),
                 ("HNTUSD", 15.2751m),
                 ("OXTUSD", 0.7733m),
                 ("XTZUSD", 6.3322m),
                 ("ENJUSD", 2.83m),
                 ("ICXUSD", 2.4107m),
-                ("WAVESUSD", 14.8026m),
                 ("ALGOUSD", 1.424m),
             };
 
