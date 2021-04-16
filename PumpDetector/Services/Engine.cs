@@ -68,13 +68,10 @@ namespace PumpDetector.Services
 
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("ONTUSD", 1.8626m),
                 ("KNCUSD", 3.458m),
                 ("HNTUSD", 15.2751m),
-                ("XTZUSD", 6.3322m),
-                ("ENJUSD", 2.83m),
-                ("ICXUSD", 2.4107m),
-                ("ALGOUSD", 1.424m),
+                ("BNBUSD", 519.269m),
+                ("HBARUSD",0.3583m )
             };
 
             foreach (var ticker in tickers)
@@ -348,45 +345,50 @@ namespace PumpDetector.Services
             int numTickers = BackTestAssets.Count();
             for (int idx = 0; idx < numTickers; idx++)
             {
-                var asset = BackTestAssets[idx];
-
-                // get 1-hour candles
-                var candles = (await api.GetCandlesAsync(asset.Ticker, 30 * 60, null, null, 500)).ToArray();
-
-                IList<Quote> history = new List<Quote>();
-                foreach (var candle in candles)
+                try
                 {
-                    history.Add(new Quote
+                    var asset = BackTestAssets[idx];
+
+                    // get 1-hour candles
+                    var candles = (await api.GetCandlesAsync(asset.Ticker, 15 * 60, null, null)).ToArray();
+
+                    IList<Quote> history = new List<Quote>();
+                    foreach (var candle in candles)
                     {
-                        Date = candle.Timestamp,
-                        Open = candle.OpenPrice,
-                        High = candle.HighPrice,
-                        Low = candle.LowPrice,
-                        Close = candle.ClosePrice,
-                        Volume = (decimal)candle.QuoteCurrencyVolume
-                    });
-                }
+                        history.Add(new Quote
+                        {
+                            Date = candle.Timestamp,
+                            Open = candle.OpenPrice,
+                            High = candle.HighPrice,
+                            Low = candle.LowPrice,
+                            Close = candle.ClosePrice,
+                            Volume = (decimal)candle.QuoteCurrencyVolume
+                        });
+                    }
 
-                // calculate RSI(14)
-                IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+                    // calculate RSI(14)
+                    IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
 
-                hasTrade = false;
-                for (int j = 0; j < candles.Length - 1; j++)
+                    hasTrade = false;
+                    for (int j = 0; j < candles.Length - 1; j++)
+                    {
+                        if (rsi[j].Rsi < 30 && !hasTrade)
+                        {
+                            hasTrade = true;
+                            buyCandle = candles[j + 1];
+                            // Debug.WriteLine($"Buy, {buyCandle.OpenPrice}, {buyCandle.HighPrice}");
+                        }
+                        else if (rsi[j].Rsi > 70 && hasTrade)
+                        {
+                            hasTrade = false;
+                            sellCandle = candles[j + 1];
+                            var lowPL = (sellCandle.LowPrice - buyCandle.HighPrice) / buyCandle.HighPrice * 100;
+                            var pl = (sellCandle.OpenPrice - buyCandle.OpenPrice) / buyCandle.OpenPrice * 100;
+                            Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}");
+                        }
+                    }
+                } catch (Exception ex)
                 {
-                    if (rsi[j].Rsi < 30 && !hasTrade)
-                    {
-                        hasTrade = true;
-                        buyCandle = candles[j + 1];
-                        // Debug.WriteLine($"Buy, {buyCandle.OpenPrice}, {buyCandle.HighPrice}");
-                    }
-                    else if (rsi[j].Rsi > 70 && hasTrade)
-                    {
-                        hasTrade = false;
-                        sellCandle = candles[j + 1];
-                        var lowPL = (sellCandle.LowPrice - buyCandle.HighPrice) / buyCandle.HighPrice * 100;
-                        var pl = (sellCandle.OpenPrice - buyCandle.OpenPrice) / buyCandle.OpenPrice * 100;
-                        Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}");
-                    }
                 }
             }
 
@@ -395,14 +397,13 @@ namespace PumpDetector.Services
 
         public async void PeekAccount()
         {
+            // botRecovery();
+
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("ONTUSD", 1.8626m),
                 ("KNCUSD", 3.458m),
                 ("HNTUSD", 15.2751m),
-                ("XTZUSD", 6.3322m),
-                ("ENJUSD", 2.83m),
-                ("ICXUSD", 2.4107m),
-                ("ALGOUSD", 1.424m),
+                ("BNBUSD", 519.269m),
+                ("HBARUSD",0.3583m )
             };
 
             var response = (await api.GetTickersAsync()).ToList();
@@ -416,6 +417,17 @@ namespace PumpDetector.Services
                 Debug.WriteLine($"{ot.Item1}, {plPercentage: 0.00}");
             }
 
+        }
+
+        /// <summary>
+        /// Some bare-bones way to do some bot recovery.
+        /// </summary>
+        private async void botRecovery()
+        {
+            var orders = await api.GetCompletedOrderDetailsAsync(null);
+            decimal stakeThreshold = 180m;
+            var myWallet = await getWallet();
+            var availableCoins = myWallet.Values.ToList().Where(v =>  v > stakeThreshold);
         }
     }
 }

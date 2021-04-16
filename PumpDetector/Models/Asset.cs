@@ -28,6 +28,8 @@ namespace PumpDetector.Models
 
         public decimal RSI { get; set; }
 
+        public decimal WalletSize { get; set; }
+
         /// <summary>
         /// Use to handle cooldown time.
         /// </summary>
