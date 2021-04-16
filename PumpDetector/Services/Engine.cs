@@ -57,7 +57,7 @@ namespace PumpDetector.Services
 
             // enumerate all markets
             // coins to remove like stable-coins and BTC, ETH.
-            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP", "MKR" };
+            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "DOGE" };
 
             var tickers = await api.GetTickersAsync();
             tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == QUOTECURRENCY &&
@@ -68,10 +68,17 @@ namespace PumpDetector.Services
 
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("KNCUSD", 3.458m),
-                ("HNTUSD", 15.2751m),
-                ("BNBUSD", 519.269m),
-                ("HBARUSD",0.3583m )
+                ("HNTUSD",  15.2751m),
+                ("KNCUSD",  3.458m),
+                ("UNIUSD",  35.2077m),
+                ("ONEUSD",  0.1385m),
+                ("XLMUSD",  0.5723m),
+                ("RVNUSD",  0.1971m),
+                ("SOLUSD",  25.9307m),
+                ("ZRXUSD",  2.0748m),
+                ("EGLDUSD", 219.217m),
+                ("HBARUSD", 0.3583m),
+                ("BNBUSD",  519.269m),
             };
 
             foreach (var ticker in tickers)
@@ -112,7 +119,8 @@ namespace PumpDetector.Services
                     this.myWallet = await getWallet();
                     logger.Trace($"Wallet: {myWallet[QUOTECURRENCY]}");
                     break;
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     logger.Trace($"retry-{retry} wallet. {ex}");
 
@@ -153,19 +161,27 @@ namespace PumpDetector.Services
 
                     // calculate RSI(14)
                     IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+
+                    // remember to throw out the last candle because that is the active candle that is not completed yet.
                     var completedRSI = rsi[rsi.Count - 2];
+                    var previousRSI = rsi[rsi.Count - 3];
 
                     asset.UpdateOHLC(cc.Timestamp, cc.OpenPrice, cc.HighPrice, cc.LowPrice, cc.ClosePrice, cc.QuoteCurrencyVolume);
                     asset.RSI = completedRSI.Rsi.Value;
 
-                    // remember to throw out the last candle because that is the active candle that is not completed yet.
-                    if (completedRSI.Rsi < 30 && !asset.HasTrade)
+                    //var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi) && !asset.HasTrade;
+                    //var isSellStop = completedRSI.Rsi < 30 && asset.HasTrade;
+                    var isBuy = completedRSI.Rsi < 30;
+                    var isSellStop = false;
+                    var isSellProfit = completedRSI.Rsi > 70 && asset.HasTrade;
+
+                    if (isBuy)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
                         doBuy(asset);
                     }
-                    else if (completedRSI.Rsi > 70 && asset.HasTrade)
+                    else if (isSellStop || isSellProfit)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
@@ -188,6 +204,22 @@ namespace PumpDetector.Services
             }
 
             logger.Trace("End getCandles");
+        }
+
+        /// <summary>
+        /// Detect RSI up-tick crossing
+        /// </summary>
+        /// <param name="previousRSI"></param>
+        /// <param name="currentRSI"></param>
+        /// <returns></returns>
+        private bool checkRSI30UpCrossing(decimal? previousRSI, decimal? currentRSI)
+        {
+            if (previousRSI.HasValue && currentRSI.HasValue)
+            {
+                return (currentRSI > 30 && previousRSI < 30);
+            }
+
+            return false;
         }
 
         public async void doBuy(Asset asset)
@@ -330,7 +362,7 @@ namespace PumpDetector.Services
             MarketCandle buyCandle = null, sellCandle = null;
 
             // coins to remove like stable-coins and BTC, ETH.
-            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "XRP" };
+            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "DOGE" };
 
             var tickers = await api.GetTickersAsync();
             tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == "USD" &&
@@ -350,7 +382,7 @@ namespace PumpDetector.Services
                     var asset = BackTestAssets[idx];
 
                     // get 1-hour candles
-                    var candles = (await api.GetCandlesAsync(asset.Ticker, 15 * 60, null, null)).ToArray();
+                    var candles = (await api.GetCandlesAsync(asset.Ticker, 30 * 60, null, null)).ToArray();
 
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
@@ -369,16 +401,28 @@ namespace PumpDetector.Services
                     // calculate RSI(14)
                     IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
 
+                    // remember to throw out the last candle because that is the active candle that is not completed yet.
+
                     hasTrade = false;
-                    for (int j = 0; j < candles.Length - 1; j++)
+                    for (int j = 1; j < candles.Length - 1; j++)
                     {
-                        if (rsi[j].Rsi < 30 && !hasTrade)
+                        // remember to throw out the last candle because that is the active candle that is not completed yet.
+                        var completedRSI = rsi[j];
+                        var previousRSI = rsi[j - 1];
+
+                        //var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi) && !asset.HasTrade;
+                        //var sellStop = completedRSI.Rsi < 30 && hasTrade;
+                        var isBuy = completedRSI.Rsi < 30;
+                        var sellStop = false;
+                        var sellProfit = completedRSI.Rsi > 70 && hasTrade;
+
+                        if (isBuy)
                         {
                             hasTrade = true;
                             buyCandle = candles[j + 1];
                             // Debug.WriteLine($"Buy, {buyCandle.OpenPrice}, {buyCandle.HighPrice}");
                         }
-                        else if (rsi[j].Rsi > 70 && hasTrade)
+                        else if (sellStop || sellProfit)
                         {
                             hasTrade = false;
                             sellCandle = candles[j + 1];
@@ -387,7 +431,8 @@ namespace PumpDetector.Services
                             Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}");
                         }
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                 }
             }
@@ -400,10 +445,17 @@ namespace PumpDetector.Services
             // botRecovery();
 
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("KNCUSD", 3.458m),
-                ("HNTUSD", 15.2751m),
-                ("BNBUSD", 519.269m),
-                ("HBARUSD",0.3583m )
+                ("HNTUSD",  15.2751m),
+                ("KNCUSD",  3.458m),
+                ("UNIUSD",  35.2077m),
+                ("ONEUSD",  0.1385m),
+                ("XLMUSD",  0.5723m),
+                ("RVNUSD",  0.1971m),
+                ("SOLUSD",  25.9307m),
+                ("ZRXUSD",  2.0748m),
+                ("EGLDUSD", 219.217m),
+                ("HBARUSD", 0.3583m),
+                ("BNBUSD",  519.269m),
             };
 
             var response = (await api.GetTickersAsync()).ToList();
@@ -427,7 +479,7 @@ namespace PumpDetector.Services
             var orders = await api.GetCompletedOrderDetailsAsync(null);
             decimal stakeThreshold = 180m;
             var myWallet = await getWallet();
-            var availableCoins = myWallet.Values.ToList().Where(v =>  v > stakeThreshold);
+            var availableCoins = myWallet.Values.ToList().Where(v => v > stakeThreshold);
         }
     }
 }

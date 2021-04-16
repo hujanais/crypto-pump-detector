@@ -16,7 +16,7 @@ namespace PumpDetector.Services
         {
             decimal numOfShares = stake / price;
 
-            double decimalPlaces = 1;
+            double decimalPlaces = 2;
             var power = Convert.ToDecimal(Math.Pow(10, decimalPlaces));
             numOfShares = Math.Floor(numOfShares * power) / power;
 

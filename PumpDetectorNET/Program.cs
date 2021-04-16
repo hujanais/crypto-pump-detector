@@ -17,8 +17,8 @@ namespace PumpDetectorNET
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             Engine engine = new Engine();
-            //engine.PeekAccount();
-            engine.BackTest();
+            engine.PeekAccount();
+            //engine.BackTest();
             //engine.StartYourEngines();
 
             Console.WriteLine("Press ESC to stop");
