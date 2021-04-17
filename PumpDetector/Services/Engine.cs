@@ -23,7 +23,7 @@ namespace PumpDetector.Services
 
         private bool isLiveTrading = true;
         decimal stakeSize = 200m;
-        decimal balanceLowWaterMark = 1000m;
+        int maxCoins = 10;
         string QUOTECURRENCY = "USD";
         decimal PUMPTHRESHOLDPERCENT = 2.5m;
         double PUMPVOLUMETIMES = 3;
@@ -43,7 +43,7 @@ namespace PumpDetector.Services
             // load in the api keys.
             api.LoadAPIKeysUnsecure(ConfigurationManager.AppSettings.Get("PublicKey"), ConfigurationManager.AppSettings.Get("SecretKey"));
 
-            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, PumpVolumeThreshold={PUMPVOLUMETIMES}, PumpThreshold={PUMPTHRESHOLDPERCENT}, StakeSize={stakeSize}, LowWaterMark={balanceLowWaterMark}");
+            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, PumpVolumeThreshold={PUMPVOLUMETIMES}, PumpThreshold={PUMPTHRESHOLDPERCENT}, StakeSize={stakeSize}, maxCoins={maxCoins}");
         }
 
         public void Dispose()
@@ -71,14 +71,15 @@ namespace PumpDetector.Services
                 ("HNTUSD",  15.2751m),
                 ("KNCUSD",  3.458m),
                 ("UNIUSD",  35.2077m),
-                ("ONEUSD",  0.1385m),
                 ("XLMUSD",  0.5723m),
-                ("RVNUSD",  0.1971m),
                 ("SOLUSD",  25.9307m),
                 ("ZRXUSD",  2.0748m),
                 ("EGLDUSD", 219.217m),
                 ("HBARUSD", 0.3583m),
                 ("BNBUSD",  519.269m),
+                ("COMPUSD",  536.53m),
+                ("MATICUSD",  0.4018m),
+                ("BCHUSD",  1007.24m),
             };
 
             foreach (var ticker in tickers)
@@ -97,7 +98,7 @@ namespace PumpDetector.Services
             var currentTime = DateTime.UtcNow;
             int PERIODSECS = 1800;  // every 30mins.
             var remainder = (currentTime.Minute * 60 + currentTime.Second) % PERIODSECS;
-            var secondsAway = PERIODSECS - remainder + 60;// don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 60 seconds.
+            var secondsAway = PERIODSECS - remainder + 60;  // don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 60 seconds.
 
             logger.Trace($"App starting in {secondsAway} seconds.");
 
@@ -173,15 +174,15 @@ namespace PumpDetector.Services
                     //var isSellStop = completedRSI.Rsi < 30 && asset.HasTrade;
                     var isBuy = completedRSI.Rsi < 30;
                     var isSellStop = false;
-                    var isSellProfit = completedRSI.Rsi > 70 && asset.HasTrade;
+                    var isSellProfit = completedRSI.Rsi > 70;
 
-                    if (isBuy)
+                    if (isBuy && !asset.HasTrade)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
                         doBuy(asset);
                     }
-                    else if (isSellStop || isSellProfit)
+                    else if ((isSellStop || isSellProfit) && asset.HasTrade)
                     {
                         var et = await api.GetTickerAsync(asset.Ticker);
                         asset.UpdatePrices(et.Last, et.Ask, et.Bid);
@@ -235,9 +236,12 @@ namespace PumpDetector.Services
                     {
                         cashAvail = myWallet[QUOTECURRENCY];
                     }
-                    if (cashAvail < balanceLowWaterMark)
+
+                    var coinsHeld = this.Assets.Where(a => a.HasTrade).Count();
+
+                    if (coinsHeld < maxCoins)
                     {
-                        throw new Exception($"Insufficient funds to buy {asset.Ticker}.  Only have {cashAvail}");
+                        throw new Exception($"Insufficient funds to buy {asset.Ticker}.  CoinsHeld exceeded. {coinsHeld}");
                     }
 
                     // get the number of shares to buy.
@@ -448,14 +452,15 @@ namespace PumpDetector.Services
                 ("HNTUSD",  15.2751m),
                 ("KNCUSD",  3.458m),
                 ("UNIUSD",  35.2077m),
-                ("ONEUSD",  0.1385m),
                 ("XLMUSD",  0.5723m),
-                ("RVNUSD",  0.1971m),
                 ("SOLUSD",  25.9307m),
                 ("ZRXUSD",  2.0748m),
                 ("EGLDUSD", 219.217m),
                 ("HBARUSD", 0.3583m),
                 ("BNBUSD",  519.269m),
+                ("COMPUSD",  536.53m),
+                ("MATICUSD",  0.4018m),
+                ("BCHUSD",  1007.24m),
             };
 
             var response = (await api.GetTickersAsync()).ToList();
