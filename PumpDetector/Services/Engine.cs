@@ -99,8 +99,6 @@ namespace PumpDetector.Services
                 this.Assets.Add(newAsset);
             }
 
-            await doWork(null);
-
             var currentTime = DateTime.UtcNow;
             int PERIODSECS = 1800;  // every 30mins.
             var remainder = (currentTime.Minute * 60 + currentTime.Second) % PERIODSECS;
