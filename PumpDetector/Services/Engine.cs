@@ -80,6 +80,10 @@ namespace PumpDetector.Services
                 ("COMPUSD",  536.53m),
                 ("MATICUSD",  0.4018m),
                 ("BCHUSD",  1007.24m),
+                ("ATOMUSD",  23.883m),
+                ("DASHUSD",  346.75m),
+                ("LINKUSD",  38.9311m),
+                ("LTCUSD",  288.25m),
             };
 
             foreach (var ticker in tickers)
@@ -94,6 +98,8 @@ namespace PumpDetector.Services
                 }
                 this.Assets.Add(newAsset);
             }
+
+            await doWork(null);
 
             var currentTime = DateTime.UtcNow;
             int PERIODSECS = 1800;  // every 30mins.
@@ -239,7 +245,7 @@ namespace PumpDetector.Services
 
                     var coinsHeld = this.Assets.Where(a => a.HasTrade).Count();
 
-                    if (coinsHeld < maxCoins)
+                    if (coinsHeld >= maxCoins)
                     {
                         throw new Exception($"Insufficient funds to buy {asset.Ticker}.  CoinsHeld exceeded. {coinsHeld}");
                     }
@@ -461,18 +467,24 @@ namespace PumpDetector.Services
                 ("COMPUSD",  536.53m),
                 ("MATICUSD",  0.4018m),
                 ("BCHUSD",  1007.24m),
+                ("ATOMUSD",  23.883m),
+                ("DASHUSD",  346.75m),
+                ("LINKUSD",  38.9311m),
+                ("LTCUSD",  288.25m),
             };
 
             var response = (await api.GetTickersAsync()).ToList();
+            decimal totalPL = 0;
             foreach (var ot in openTickers)
             {
                 var foundTkr = response.FirstOrDefault(r => r.Key == ot.Item1);
                 var buyPrice = ot.Item2;
                 var currentPrice = foundTkr.Value.Last;
                 var plPercentage = (currentPrice - buyPrice) / buyPrice * 100;
-
+                totalPL += (plPercentage/100 * 200);
                 Debug.WriteLine($"{ot.Item1}, {plPercentage: 0.00}");
             }
+            Debug.WriteLine($"{totalPL: 0.00}");
 
         }
 
