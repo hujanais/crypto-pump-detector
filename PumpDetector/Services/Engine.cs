@@ -22,11 +22,9 @@ namespace PumpDetector.Services
         private Dictionary<string, decimal> myWallet;
 
         private bool isLiveTrading = true;
-        decimal stakeSize = 200m;
+        decimal stakeSize = 100m;
         int maxCoins = 10;
         string QUOTECURRENCY = "USD";
-        decimal PUMPTHRESHOLDPERCENT = 2.5m;
-        double PUMPVOLUMETIMES = 3;
 
         const int FIVEMINUTES = 5 * 60 * 1000;
         Timer timer = null;
@@ -43,7 +41,7 @@ namespace PumpDetector.Services
             // load in the api keys.
             api.LoadAPIKeysUnsecure(ConfigurationManager.AppSettings.Get("PublicKey"), ConfigurationManager.AppSettings.Get("SecretKey"));
 
-            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, PumpVolumeThreshold={PUMPVOLUMETIMES}, PumpThreshold={PUMPTHRESHOLDPERCENT}, StakeSize={stakeSize}, maxCoins={maxCoins}");
+            logger.Trace($"Starting {QUOTECURRENCY} trading. LiveTrading={isLiveTrading}, StakeSize={stakeSize}, maxCoins={maxCoins}");
         }
 
         public void Dispose()
@@ -68,18 +66,6 @@ namespace PumpDetector.Services
 
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("KNCUSD",  3.458m),
-                ("UNIUSD",  35.2077m),
-                ("XLMUSD",  0.5723m),
-                ("ZRXUSD",  2.0748m),
-                ("EGLDUSD", 219.217m),
-                ("HBARUSD", 0.3583m),
-                ("BNBUSD",  519.269m),
-                ("COMPUSD",  536.53m),
-                ("MATICUSD",  0.4018m),
-                ("ATOMUSD",  23.883m),
-                ("DASHUSD",  346.75m),
-                ("LTCUSD",  288.25m),
             };
 
             foreach (var ticker in tickers)
@@ -96,13 +82,13 @@ namespace PumpDetector.Services
             }
 
             var currentTime = DateTime.UtcNow;
-            int PERIODSECS = 1800;  // every 30mins.
+            int PERIODSECS = 900;  // every 15mins.
             var remainder = (currentTime.Minute * 60 + currentTime.Second) % PERIODSECS;
             var secondsAway = PERIODSECS - remainder + 60;  // don't start exactly on the hour so that the server has prepared the 5minute candle.  offset by 60 seconds.
 
             logger.Trace($"App starting in {secondsAway} seconds.");
 
-            // Update 5-minute candle once per 5-minutes.
+            // Update 15-minute candle once per 15-minutes.
             timer = new Timer(async (objState) => await doWork(objState));
             timer.Change(secondsAway * 1000, PERIODSECS * 1000);
         }
@@ -143,7 +129,7 @@ namespace PumpDetector.Services
                 try
                 {
                     Console.Write(".");
-                    var candles = (await api.GetCandlesAsync(ticker, 30 * 60, null, null, 200)).ToArray();
+                    var candles = (await api.GetCandlesAsync(ticker, 15 * 60, null, null, 300)).ToArray();
                     var cc = candles[candles.Count() - 2];
 
                     IList<Quote> history = new List<Quote>();
@@ -386,7 +372,7 @@ namespace PumpDetector.Services
                     var asset = BackTestAssets[idx];
 
                     // get 1-hour candles
-                    var candles = (await api.GetCandlesAsync(asset.Ticker, 30 * 60, null, null)).ToArray();
+                    var candles = (await api.GetCandlesAsync(asset.Ticker, 15 * 60, null, null)).ToArray();
 
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
@@ -418,7 +404,7 @@ namespace PumpDetector.Services
                         //var sellStop = completedRSI.Rsi < 30 && hasTrade;
                         var isBuy = completedRSI.Rsi < 30;
                         var sellStop = false;
-                        var sellProfit = completedRSI.Rsi > 70 && hasTrade;
+                        var sellProfit = completedRSI.Rsi > 69 && hasTrade;
 
                         if (isBuy)
                         {
