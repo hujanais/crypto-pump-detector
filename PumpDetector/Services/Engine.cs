@@ -68,21 +68,17 @@ namespace PumpDetector.Services
 
             // Recovery bot from crash.
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("HNTUSD",  15.2751m),
                 ("KNCUSD",  3.458m),
                 ("UNIUSD",  35.2077m),
                 ("XLMUSD",  0.5723m),
-                ("SOLUSD",  25.9307m),
                 ("ZRXUSD",  2.0748m),
                 ("EGLDUSD", 219.217m),
                 ("HBARUSD", 0.3583m),
                 ("BNBUSD",  519.269m),
                 ("COMPUSD",  536.53m),
                 ("MATICUSD",  0.4018m),
-                ("BCHUSD",  1007.24m),
                 ("ATOMUSD",  23.883m),
                 ("DASHUSD",  346.75m),
-                ("LINKUSD",  38.9311m),
                 ("LTCUSD",  288.25m),
             };
 
@@ -178,7 +174,7 @@ namespace PumpDetector.Services
                     //var isSellStop = completedRSI.Rsi < 30 && asset.HasTrade;
                     var isBuy = completedRSI.Rsi < 30;
                     var isSellStop = false;
-                    var isSellProfit = completedRSI.Rsi > 70;
+                    var isSellProfit = completedRSI.Rsi > 69;
 
                     if (isBuy && !asset.HasTrade)
                     {
@@ -453,21 +449,17 @@ namespace PumpDetector.Services
             // botRecovery();
 
             var openTickers = new ValueTuple<string, decimal>[] {
-                ("HNTUSD",  15.2751m),
                 ("KNCUSD",  3.458m),
                 ("UNIUSD",  35.2077m),
                 ("XLMUSD",  0.5723m),
-                ("SOLUSD",  25.9307m),
                 ("ZRXUSD",  2.0748m),
                 ("EGLDUSD", 219.217m),
                 ("HBARUSD", 0.3583m),
                 ("BNBUSD",  519.269m),
                 ("COMPUSD",  536.53m),
                 ("MATICUSD",  0.4018m),
-                ("BCHUSD",  1007.24m),
                 ("ATOMUSD",  23.883m),
                 ("DASHUSD",  346.75m),
-                ("LINKUSD",  38.9311m),
                 ("LTCUSD",  288.25m),
             };
 
