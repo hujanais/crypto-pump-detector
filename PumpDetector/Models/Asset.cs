@@ -46,36 +46,24 @@ namespace PumpDetector.Models
         public bool IsActiveTrailingStops { get; set; }
 
         /// <summary>
-        /// Prevent selling of coin for first 5 minutes after buy.
-        /// </summary>
-        public bool CanSell
-        {
-            get
-            {
-                var timeElapsed = DateTime.UtcNow - LastBuyTime;
-                return timeElapsed.TotalSeconds > (5 * 60);
-            }
-        }
-
-        /// <summary>
         /// Signal whether this is a real pump
         /// Open price lower 1/3 candle
         /// Close price upper 1/3 candle
         /// 
         /// </summary>
-        public bool IsGreenCandle
-        {
-            get
-            {
-                var candlelength = HighPrice - LowPrice;
-                var deltaOpen = OpenPrice - LowPrice;
-                var deltaClose = ClosePrice - LowPrice;
-                var iSOpenGood = deltaOpen < (0.3333m * candlelength);
-                var isCloseGood = deltaClose > (0.90m * candlelength);
+        //public bool IsGreenCandle
+        //{
+        //    get
+        //    {
+        //        var candlelength = HighPrice - LowPrice;
+        //        var deltaOpen = OpenPrice - LowPrice;
+        //        var deltaClose = ClosePrice - LowPrice;
+        //        var iSOpenGood = deltaOpen < (0.3333m * candlelength);
+        //        var isCloseGood = deltaClose > (0.90m * candlelength);
 
-                return iSOpenGood & isCloseGood;
-            }
-        }
+        //        return iSOpenGood & isCloseGood;
+        //    }
+        //}
 
         public decimal PL
         {
@@ -92,13 +80,9 @@ namespace PumpDetector.Models
             }
         }
 
-        public decimal percentagePriceChange
+        public Asset ()
         {
-            get
-            {
-                var percentage = (this.ClosePrice - this.OpenPrice) / this.OpenPrice * 100;
-                return percentage;
-            }
+            this.Reset();
         }
 
         #region Methods
@@ -111,11 +95,6 @@ namespace PumpDetector.Models
             this.MaxPrice = 0;
             this.HasTrade = false;
             this.IsActiveTrailingStops = false;
-        }
-
-        public override string ToString()
-        {
-            return $"{Ticker}, {OpenPrice:0.0000}, {HighPrice: 0.0000}, {LowPrice: 0.0000}, {ClosePrice: 0.0000}, {Volume}, {IsGreenCandle}, {percentagePriceChange:0.00}, {PL:0.00}, {HasTrade}";
         }
 
         public void UpdatePrices(decimal last, decimal ask, decimal bid)
@@ -138,13 +117,13 @@ namespace PumpDetector.Models
         /// <summary>
         /// Re-evalute stoploss based on the maximum price.
         /// </summary>
-        /// <param name="asset"></param>
-        public void adjustStopLoss()
+        /// <param name="percent">percentage to start trailing stoploss.</param>
+        public void adjustStopLoss(double percent)
         {
-            // re-adjust stoploss when profit > 3%.
             double deltaP = (double)(this.Price / this.BuyPrice);
 
-            if (deltaP > 1.03)
+            double threshold = 1.0 + percent / 100.0;
+            if (deltaP > threshold)
             {
                 if (!IsActiveTrailingStops)
                 {

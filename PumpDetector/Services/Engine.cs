@@ -25,12 +25,26 @@ namespace PumpDetector.Services
         decimal stakeSize = 100m;
         int maxCoins = 10;
         string QUOTECURRENCY = "USD";
+        double TAKEPROFITPERCENTAGE = 8.0;
 
         const int FIVEMINUTES = 5 * 60 * 1000;
         Timer timer = null;
 
         // https://makolyte.com/nlog-split-trace-logging-into-its-own-file/
         NLog.Logger logger = NLog.LogManager.GetLogger("*");
+
+        ValueTuple<string, decimal>[] openTickers = new ValueTuple<string, decimal>[] {
+                ("LINKUSD",36.5656m),
+                ("BATUSD",1.2285m),
+                ("ADAUSD",1.2239m),
+                ("BCHUSD",907.84m),
+                ("EOSUSD",6.3267m),
+                ("VETUSD",0.233m),
+                ("NEOUSD",100.412m),
+                ("XLMUSD",0.4969m),
+                ("STORJUSD", 1.9061m),
+                ("VTHOUSD", 0.0202m)
+            };
 
         public Engine()
         {
@@ -55,7 +69,7 @@ namespace PumpDetector.Services
 
             // enumerate all markets
             // coins to remove like stable-coins and BTC, ETH.
-            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "DOGE" };
+            string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "DOGE", "BNB" };
 
             var tickers = await api.GetTickersAsync();
             tickers = tickers.Where(t => t.Value.Volume.QuoteCurrency == QUOTECURRENCY &&
@@ -64,20 +78,18 @@ namespace PumpDetector.Services
 
             logger.Trace($"Enumerated {tickers.Count()} markets.");
 
-            // Recovery bot from crash.
-            var openTickers = new ValueTuple<string, decimal>[] {
-            };
-
             foreach (var ticker in tickers)
             {
                 var newAsset = new Asset { Ticker = ticker.Key, BaseCurrency = ticker.Value.Volume.BaseCurrency };
 
+                // recover stopped bot.
                 var foundTkr = openTickers.FirstOrDefault(o => o.Item1 == newAsset.Ticker);
                 if (foundTkr.Item1 != null)
                 {
                     newAsset.HasTrade = true;
                     newAsset.BuyPrice = foundTkr.Item2;
                 }
+
                 this.Assets.Add(newAsset);
             }
 
@@ -91,6 +103,28 @@ namespace PumpDetector.Services
             // Update 15-minute candle once per 15-minutes.
             timer = new Timer(async (objState) => await doWork(objState));
             timer.Change(secondsAway * 1000, PERIODSECS * 1000);
+
+            // power up socket listener.
+            var socket = await api.GetTickersWebSocketAsync(items => {
+                // we are only interested in tickers with trades.
+                var tradedAssets = this.Assets.Where(a => a.HasTrade);
+                foreach (var tradedAsset in tradedAssets)
+                {
+                    var foundTkr = items.FirstOrDefault(p => p.Key == tradedAsset.Ticker);
+                    if (foundTkr.Key != null)
+                    {
+                        tradedAsset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
+                        tradedAsset.adjustStopLoss(TAKEPROFITPERCENTAGE);
+                        if (tradedAsset.Price < tradedAsset.StopLoss)
+                        {
+                            doSell(tradedAsset);
+                        }
+                    }
+                }
+
+            }, this.Assets.Select(a => a.Ticker).ToArray());
+
+            socket.ConnectInterval = new TimeSpan(0, 0, 30);
         }
 
         public async Task doWork(object objState)
@@ -157,21 +191,19 @@ namespace PumpDetector.Services
                     asset.RSI = completedRSI.Rsi.Value;
 
                     //var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi) && !asset.HasTrade;
-                    //var isSellStop = completedRSI.Rsi < 30 && asset.HasTrade;
                     var isBuy = completedRSI.Rsi < 30;
-                    var isSellStop = false;
                     var isSellProfit = completedRSI.Rsi > 69;
 
                     if (isBuy && !asset.HasTrade)
                     {
-                        var et = await api.GetTickerAsync(asset.Ticker);
-                        asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                        //var et = await api.GetTickerAsync(asset.Ticker);
+                        //asset.UpdatePrices(et.Last, et.Ask, et.Bid);
                         doBuy(asset);
                     }
-                    else if ((isSellStop || isSellProfit) && asset.HasTrade)
+                    else if (isSellProfit && asset.HasTrade)
                     {
-                        var et = await api.GetTickerAsync(asset.Ticker);
-                        asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                        //var et = await api.GetTickerAsync(asset.Ticker);
+                        //asset.UpdatePrices(et.Last, et.Ask, et.Bid);
                         doSell(asset);
                     }
                 }
@@ -258,9 +290,7 @@ namespace PumpDetector.Services
                     asset.BuyPrice = asset.Ask;
                     asset.MaxPrice = asset.BuyPrice;
                     asset.LastBuyTime = DateTime.UtcNow;
-
-                    // set the initial stoploss as 0.5% of buy price.
-                    asset.StopLoss = 0.99m * asset.BuyPrice;
+                    asset.StopLoss = 0;      // disable stoploss.
 
                     logger.Info($"Buy, {asset.Ticker}, BuyPrice: {asset.BuyPrice}, StopLoss: {asset.StopLoss}");
                 }
@@ -421,6 +451,15 @@ namespace PumpDetector.Services
                             Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}");
                         }
                     }
+
+                    // unclosed trades.
+                    if (hasTrade)
+                    {
+                        sellCandle = candles[candles.Length - 1];
+                        var lowPL = (sellCandle.LowPrice - buyCandle.HighPrice) / buyCandle.HighPrice * 100;
+                        var pl = (sellCandle.OpenPrice - buyCandle.OpenPrice) / buyCandle.OpenPrice * 100;
+                        Debug.WriteLine($"{asset.Ticker}, {buyCandle.Timestamp}, {sellCandle.Timestamp}, {sellCandle.LowPrice}, {sellCandle.HighPrice}, {lowPL:0.00}, {pl:0.00}, Unclosed ");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -433,32 +472,40 @@ namespace PumpDetector.Services
         public async void PeekAccount()
         {
             // botRecovery();
-
-            var openTickers = new ValueTuple<string, decimal>[] {
-                ("KNCUSD",  3.458m),
-                ("UNIUSD",  35.2077m),
-                ("XLMUSD",  0.5723m),
-                ("ZRXUSD",  2.0748m),
-                ("EGLDUSD", 219.217m),
-                ("HBARUSD", 0.3583m),
-                ("BNBUSD",  519.269m),
-                ("COMPUSD",  536.53m),
-                ("MATICUSD",  0.4018m),
-                ("ATOMUSD",  23.883m),
-                ("DASHUSD",  346.75m),
-                ("LTCUSD",  288.25m),
-            };
-
             var response = (await api.GetTickersAsync()).ToList();
             decimal totalPL = 0;
             foreach (var ot in openTickers)
             {
+                var candles = (await api.GetCandlesAsync(ot.Item1, 15 * 60, null, null, 300)).ToArray();
+                var cc = candles[candles.Count() - 2];
+
+                IList<Quote> history = new List<Quote>();
+                foreach (var candle in candles)
+                {
+                    history.Add(new Quote
+                    {
+                        Date = candle.Timestamp,
+                        Open = candle.OpenPrice,
+                        High = candle.HighPrice,
+                        Low = candle.LowPrice,
+                        Close = candle.ClosePrice,
+                        Volume = (decimal)candle.QuoteCurrencyVolume
+                    });
+                }
+
+                // calculate RSI(14)
+                IList<RsiResult> rsi = Indicator.GetRsi(history, 14).ToArray();
+
+                // remember to throw out the last candle because that is the active candle that is not completed yet.
+                var currentRSI = rsi[rsi.Count - 1];
+                var completedRSI = rsi[rsi.Count - 2];
+
                 var foundTkr = response.FirstOrDefault(r => r.Key == ot.Item1);
                 var buyPrice = ot.Item2;
                 var currentPrice = foundTkr.Value.Last;
                 var plPercentage = (currentPrice - buyPrice) / buyPrice * 100;
-                totalPL += (plPercentage/100 * 200);
-                Debug.WriteLine($"{ot.Item1}, {plPercentage: 0.00}");
+                totalPL += (plPercentage / 100 * 100);
+                Debug.WriteLine($"{ot.Item1}, completedRSI: {completedRSI.Rsi: 0.00}, currentRSI: {currentRSI.Rsi: 0.00}, PL: {plPercentage: 0.00}");
             }
             Debug.WriteLine($"{totalPL: 0.00}");
 
