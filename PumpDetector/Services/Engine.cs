@@ -34,13 +34,11 @@ namespace PumpDetector.Services
         NLog.Logger logger = NLog.LogManager.GetLogger("*");
 
         ValueTuple<string, decimal>[] openTickers = new ValueTuple<string, decimal>[] {
-                ("LINKUSD",36.5656m),
                 ("BATUSD",1.2285m),
                 ("ADAUSD",1.2239m),
                 ("BCHUSD",907.84m),
                 ("EOSUSD",6.3267m),
                 ("VETUSD",0.233m),
-                ("NEOUSD",100.412m),
                 ("XLMUSD",0.4969m),
                 ("STORJUSD", 1.9061m),
                 ("VTHOUSD", 0.0202m)
