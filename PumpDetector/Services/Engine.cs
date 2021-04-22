@@ -41,7 +41,9 @@ namespace PumpDetector.Services
                 ("VETUSD",0.233m),
                 ("XLMUSD",0.4969m),
                 ("STORJUSD", 1.9061m),
-                ("VTHOUSD", 0.0202m)
+                ("VTHOUSD", 0.0202m),
+                ("QTUMUSD", 13.605m),
+                ("RVNUSD", 0.1549m),
             };
 
         public Engine()
@@ -104,18 +106,20 @@ namespace PumpDetector.Services
 
             // power up socket listener.
             var socket = await api.GetTickersWebSocketAsync(items => {
-                // we are only interested in tickers with trades.
-                var tradedAssets = this.Assets.Where(a => a.HasTrade);
-                foreach (var tradedAsset in tradedAssets)
+                foreach (var asset in this.Assets)
                 {
-                    var foundTkr = items.FirstOrDefault(p => p.Key == tradedAsset.Ticker);
+                    var foundTkr = items.FirstOrDefault(p => p.Key == asset.Ticker);
                     if (foundTkr.Key != null)
                     {
-                        tradedAsset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
-                        tradedAsset.adjustStopLoss(TAKEPROFITPERCENTAGE);
-                        if (tradedAsset.Price < tradedAsset.StopLoss)
+                        asset.UpdatePrices(foundTkr.Value.Last, foundTkr.Value.Ask, foundTkr.Value.Bid);
+
+                        if (asset.HasTrade)
                         {
-                            doSell(tradedAsset);
+                            asset.adjustStopLoss(TAKEPROFITPERCENTAGE);
+                            if (asset.Price < asset.StopLoss)
+                            {
+                                doSell(asset);
+                            }
                         }
                     }
                 }
