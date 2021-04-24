@@ -23,27 +23,26 @@ namespace PumpDetector.Services
 
         private bool isLiveTrading = true;
         decimal stakeSize = 100m;
-        int maxCoins = 10;
+        int maxCoins = 0;
         string QUOTECURRENCY = "USD";
-        double TAKEPROFITPERCENTAGE = 8.0;
+        double TAKEPROFITPERCENTAGE = 5.0;
 
-        const int FIVEMINUTES = 5 * 60 * 1000;
         Timer timer = null;
 
         // https://makolyte.com/nlog-split-trace-logging-into-its-own-file/
         NLog.Logger logger = NLog.LogManager.GetLogger("*");
 
         ValueTuple<string, decimal>[] openTickers = new ValueTuple<string, decimal>[] {
-                ("BATUSD",1.2285m),
-                ("ADAUSD",1.2239m),
                 ("BCHUSD",907.84m),
                 ("EOSUSD",6.3267m),
-                ("VETUSD",0.233m),
-                ("XLMUSD",0.4969m),
-                ("STORJUSD", 1.9061m),
-                ("VTHOUSD", 0.0202m),
                 ("QTUMUSD", 13.605m),
                 ("RVNUSD", 0.1549m),
+                ("MKRUSD", 3806.11m),
+                ("EGLDUSD", 147.854m),
+                ("STORJUSD", 1.7136m),
+                ("ICXUSD", 1.692m),
+                ("DASHUSD", 242.09m),
+                ("XLMUSD", 0.4221m),
             };
 
         public Engine()
@@ -404,7 +403,7 @@ namespace PumpDetector.Services
                     var asset = BackTestAssets[idx];
 
                     // get 1-hour candles
-                    var candles = (await api.GetCandlesAsync(asset.Ticker, 15 * 60, null, null)).ToArray();
+                    var candles = (await api.GetCandlesAsync(asset.Ticker, 30 * 60, null, null)).ToArray();
 
                     IList<Quote> history = new List<Quote>();
                     foreach (var candle in candles)
@@ -426,19 +425,20 @@ namespace PumpDetector.Services
                     // remember to throw out the last candle because that is the active candle that is not completed yet.
 
                     hasTrade = false;
-                    for (int j = 1; j < candles.Length - 1; j++)
+                    for (int j = 1; j < candles.Length - 2; j++)
                     {
                         // remember to throw out the last candle because that is the active candle that is not completed yet.
                         var completedRSI = rsi[j];
                         var previousRSI = rsi[j - 1];
 
-                        //var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi) && !asset.HasTrade;
-                        //var sellStop = completedRSI.Rsi < 30 && hasTrade;
+                        // var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi);
                         var isBuy = completedRSI.Rsi < 30;
+                        
+                        // var sellStop = completedRSI.Rsi < 30 && hasTrade;
                         var sellStop = false;
                         var sellProfit = completedRSI.Rsi > 69 && hasTrade;
 
-                        if (isBuy)
+                        if (isBuy && !hasTrade)
                         {
                             hasTrade = true;
                             buyCandle = candles[j + 1];
