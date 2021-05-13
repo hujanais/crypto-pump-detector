@@ -226,7 +226,7 @@ namespace PumpDetector.Services
             logger.Trace(String.Join(",", timeStamps));
             foreach (var tA in tradedAssets)
             {
-                logger.Trace($"{tA.Ticker}, BuyPrice: {tA.BuyPrice:0.000}, ClosePrice:{tA.ClosePrice:0.000}, RSI: {tA.RSI:0.00}");
+                logger.Trace($"{tA.Ticker}, BuyPrice: {tA.BuyPrice:0.000}, ClosePrice:{tA.ClosePrice:0.000}");
             }
 
             logger.Trace("End getCandles");
