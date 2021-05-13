@@ -89,6 +89,9 @@
     <Compile Include="..\PumpDetector\Models\Asset.cs">
       <Link>Models\Asset.cs</Link>
     </Compile>
+    <Compile Include="..\PumpDetector\Models\HeikinAshi.cs">
+      <Link>Models\HeikinAshi.cs</Link>
+    </Compile>
     <Compile Include="..\PumpDetector\Models\Kline.cs">
       <Link>Models\Kline.cs</Link>
     </Compile>
