@@ -10,7 +10,9 @@ namespace PumpDetector.Models
     {
         public enum HeikinAshiSignal
         {
+            STRONGBUY,
             BUY,
+            STRONGSELL,
             SELL,
             FLAT,
         }
@@ -38,6 +40,9 @@ namespace PumpDetector.Models
                     if (tailLength < epsilon)
                     {
                         // bullish
+                        this.signal = HeikinAshiSignal.STRONGBUY;
+                    } else
+                    {
                         this.signal = HeikinAshiSignal.BUY;
                     }
                 }
@@ -48,6 +53,9 @@ namespace PumpDetector.Models
                     if (headLength < epsilon)
                     {
                         // bearish
+                        this.signal = HeikinAshiSignal.STRONGSELL;
+                    } else
+                    {
                         this.signal = HeikinAshiSignal.SELL;
                     }
                 }

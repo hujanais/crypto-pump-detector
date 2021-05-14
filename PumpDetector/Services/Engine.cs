@@ -198,13 +198,13 @@ namespace PumpDetector.Services
                     //var isBuy = this.checkRSI30UpCrossing(previousRSI.Rsi, completedRSI.Rsi) && !asset.HasTrade;
                     //var isBuy = completedRSI.Rsi < 20;
                     //var isSellProfit = completedRSI.Rsi > 69;
-                    var isBuy = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.BUY && previousAshi.Signal == HeikinAshi.HeikinAshiSignal.BUY;
-                    var isSellProfit = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL && previousAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL;
+                    var isBuy = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.STRONGBUY && previousAshi.Signal != HeikinAshi.HeikinAshiSignal.STRONGBUY;
+                    var isSellProfit = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.STRONGSELL || previousAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL;
 
                     if (isBuy && !asset.HasTrade)
                     {
-                        //var et = await api.GetTickerAsync(asset.Ticker);
-                        //asset.UpdatePrices(et.Last, et.Ask, et.Bid);
+                        var et = await api.GetTickerAsync(asset.Ticker);
+                        asset.UpdatePrices(et.Last, et.Ask, et.Bid);
                         doBuy(asset);
                     }
                     else if (isSellProfit && asset.HasTrade)
@@ -441,8 +441,8 @@ namespace PumpDetector.Services
                         var completedAshi = ashiList[j];
                         var previousAshi = ashiList[j - 1];
 
-                        var isBuy = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.BUY && previousAshi.Signal == HeikinAshi.HeikinAshiSignal.BUY;
-                        var isSellProfit = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL && previousAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL;
+                        var isBuy = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.STRONGBUY && previousAshi.Signal != HeikinAshi.HeikinAshiSignal.STRONGBUY;
+                        var isSellProfit = completedAshi.Signal == HeikinAshi.HeikinAshiSignal.STRONGSELL || previousAshi.Signal == HeikinAshi.HeikinAshiSignal.SELL;
 
                         if (isBuy && !hasTrade)
                         {
