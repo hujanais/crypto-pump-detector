@@ -23,10 +23,10 @@ namespace PumpDetector.Services
 
         private bool isLiveTrading = true;
         decimal stakeSize = 100m;
-        int maxCoins = 10;
+        int maxCoins = 5;
         string QUOTECURRENCY = "USD";
         double TAKEPROFITPERCENTAGE = 8.0;
-        int CANDLEPERIODSECS = 4 * 60 * 60;
+        int CANDLEPERIODSECS = 8 * 60 * 60;
 
         Timer timer = null;
 
@@ -41,7 +41,7 @@ namespace PumpDetector.Services
                 //("EOSUSD",6.3267m),
             };
 
-        string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "BTC", "ETH", "PAX", "BNB", "XRP" };
+        string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "PAXG", "BTC", "XRP", "KNC", "REP", "MANA"};
 
         public Engine()
         {
