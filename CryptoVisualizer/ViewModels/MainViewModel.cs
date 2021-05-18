@@ -83,7 +83,7 @@ namespace CryptoVisualizer.ViewModels
             try
             {
                 int periodSeconds = this.selectedCandleSize * 60 * 60;
-                var candles = await api.GetCandlesAsync(this.selectedTicker, periodSeconds);
+                var candles = await api.GetCandlesAsync(this.selectedTicker, periodSeconds, null, null, 100);
                 IList<Quote> history = new List<Quote>();
                 foreach (var candle in candles)
                 {
@@ -107,7 +107,8 @@ namespace CryptoVisualizer.ViewModels
 
 
                 ohlcChartValues.Clear();
-                ohlcChartValues.AddRange(ohlcPoints.Reverse().Take(100).Reverse());
+                ohlcChartValues.AddRange(ohlcPoints);
+                //ohlcChartValues.AddRange(ohlcPoints.Reverse().Take(100).Reverse());
             }
             catch (Exception ex)
             {

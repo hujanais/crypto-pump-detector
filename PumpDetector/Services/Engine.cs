@@ -22,10 +22,9 @@ namespace PumpDetector.Services
         private Dictionary<string, decimal> myWallet;
 
         private bool isLiveTrading = true;
-        decimal stakeSize = 100m;
+        decimal stakeSize = 20m;
         int maxCoins = 5;
         string QUOTECURRENCY = "USD";
-        double TAKEPROFITPERCENTAGE = 8.0;
         int CANDLEPERIODSECS = 8 * 60 * 60;
 
         Timer timer = null;
@@ -41,7 +40,7 @@ namespace PumpDetector.Services
                 //("EOSUSD",6.3267m),
             };
 
-        string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "PAXG", "BTC", "XRP", "KNC", "REP", "MANA"};
+        string[] coinsToRemove = { "USDC", "BUSD", "USDT", "DAI", "PAXG", "BTC", "XRP", "KNC", "REP", "MANA", "ETH", "ADA", "BNB"};
 
         public Engine()
         {
@@ -271,6 +270,11 @@ namespace PumpDetector.Services
 
                     // get the number of shares to buy.
                     var shares = RoundShares.GetRoundedShares(stakeSize, asset.Price);
+                    if (shares < 0.01m)
+                    {
+                        throw new Exception($"${shares} is too small for {asset.Ticker}.");
+                    }
+
                     var order = new ExchangeOrderRequest
                     {
                         Amount = shares,
